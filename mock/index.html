@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>えいたんレーダー（モック）</title>
+<style>
+  :root {
+    color-scheme: light;
+    /* 学習記録アプリの設計書と同じ配色 */
+    --bg:#f4f6fb; --surface:#ffffff; --surface2:#eef1f9; --ink:#1e3a5f; --ink2:#475569; --ink3:#94a3b8;
+    --line:#dde3f0; --primary:#3b5bdb; --primary-ink:#ffffff;
+    --good:#2f9e44; --warn:#e67700; --bad:#c92a2a; --good-bg:#ecfdf3; --bad-bg:#fff1f1;
+    --lv5:#2f9e44; --lv4:#3b5bdb; --lv3:#e67700; --lv25:#6741d9; --lv2:#d6336c; --lv15:#0b7285;
+    --hs:85%; --hl:82%; --heat-ink:#1e3a5f;
+  }
+  :root { box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  html { scroll-padding-top:env(safe-area-inset-top,0px); }
+  *,*::before,*::after { box-sizing:inherit; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-size:15px; line-height:1.6;
+    font-family:'Hiragino Maru Gothic ProN','Hiragino Sans','Yu Gothic UI','Meiryo',system-ui,sans-serif;
+    -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent; }
+  button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
+  button:focus-visible, input:focus-visible { outline:3px solid var(--primary); outline-offset:2px; }
+  .wrap { max-width:480px; margin:0 auto; padding:14px 16px 120px; }
+  h1 { font-size:22px; margin:6px 0 2px; line-height:1.3; }
+  h2 { font-size:16px; margin:26px 0 10px; }
+  .sub { color:var(--ink2); font-size:13px; margin:0; }
+  .mock { display:flex; gap:8px; align-items:center; background:var(--surface2); color:var(--ink2);
+    border-radius:10px; padding:8px 12px; font-size:12px; margin-bottom:14px; }
+
+  /* hero */
+  .hero { background:var(--primary); color:var(--primary-ink); border-radius:22px; padding:20px 20px 18px; margin:12px 0 4px; }
+  .hero small { opacity:.85; font-size:13px; }
+  .hero .big { font-size:30px; font-weight:800; line-height:1.25; margin:4px 0 2px; letter-spacing:.02em; }
+  .hero .pct { font-size:13px; opacity:.9; margin-bottom:16px; }
+  .btn { display:block; width:100%; min-height:52px; border-radius:16px; font-weight:800; font-size:16px; padding:12px 16px; text-align:center; }
+  .btn-light { background:var(--primary-ink); color:var(--primary); }
+  .btn-main { background:var(--primary); color:var(--primary-ink); }
+  .btn-sub { background:var(--surface2); color:var(--ink); }
+  .row2 { display:flex; gap:10px; }
+  .row2 > * { flex:1; }
+
+  .stat { display:flex; gap:10px; margin:12px 0 0; }
+  .stat div { flex:1; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:10px 14px; }
+  .stat b { font-size:24px; font-variant-numeric:tabular-nums; display:block; line-height:1.2; }
+  .stat span { font-size:12px; color:var(--ink2); }
+
+  /* level bars */
+  .lv { display:flex; align-items:center; gap:10px; padding:8px 0; }
+  .lv-name { width:58px; font-weight:800; }
+  .bar { flex:1; height:12px; background:var(--surface2); border-radius:8px; overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:8px; }
+  .lv-n { width:58px; text-align:right; font-size:13px; color:var(--ink2); font-variant-numeric:tabular-nums; }
+
+  /* word rows */
+  .list { background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+  .wr { display:flex; align-items:center; gap:10px; padding:11px 14px; border-bottom:1px solid var(--line); }
+  .wr:last-child { border-bottom:0; }
+  .wr .w { flex:1; min-width:0; }
+  .wr .en { font-weight:800; font-size:16px; overflow-wrap:anywhere; }
+  .wr .ja { font-size:13px; color:var(--ink2); }
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:0 7px; border-radius:6px; margin-right:4px; color:#fff; vertical-align:1px; }
+  .tag.l5 { background:var(--lv5); } .tag.l4 { background:var(--lv4); } .tag.l3 { background:var(--lv3); } .tag.l25 { background:var(--lv25); } .tag.l2 { background:var(--lv2); } .tag.l15 { background:var(--lv15); }
+  .spk { width:40px; height:40px; border-radius:50%; background:var(--surface2); font-size:18px; flex-shrink:0; }
+  .dots { display:flex; gap:3px; margin-top:4px; }
+  .dots i { width:14px; height:6px; border-radius:3px; background:var(--surface2); }
+  .dots i.h { background:hsl(var(--h) var(--hs) calc(var(--hl) - 18%)); }
+  .dots i.n { background:var(--line); }
+
+  /* segmented / chips */
+  .seg { display:flex; background:var(--surface2); border-radius:12px; padding:3px; gap:2px; overflow-x:auto; }
+  .seg button { flex:1 0 auto; white-space:nowrap; padding:8px 12px; border-radius:10px; font-weight:700; font-size:13px; color:var(--ink2); }
+  .seg button.on { background:var(--surface); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.12); }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { padding:9px 15px; border-radius:20px; background:var(--surface); border:1.5px solid var(--line); font-weight:700; font-size:14px; color:var(--ink2); }
+  .chip.on { background:var(--primary); border-color:var(--primary); color:var(--primary-ink); }
+  .field { margin:0 0 18px; }
+  .field > label { display:block; font-weight:800; margin-bottom:8px; font-size:14px; }
+
+  /* heatmap */
+  .heat { display:grid; grid-template-columns:5.4em repeat(3,1fr); gap:6px; margin-top:10px; align-items:center; }
+  .heat .hd { font-size:12px; font-weight:800; text-align:center; color:var(--ink2); }
+  .heat .rl { font-size:12.5px; font-weight:700; }
+  .cell { height:46px; border-radius:12px; font-weight:800; font-size:15px; font-variant-numeric:tabular-nums;
+    background:hsl(var(--h) var(--hs) var(--hl)); color:var(--heat-ink); }
+  .cell.none { background:var(--surface2); color:var(--ink3); font-weight:600; }
+  .legend { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--ink2); margin-top:12px; }
+  .legend i { flex:1; height:10px; border-radius:6px;
+    background:linear-gradient(90deg,hsl(4 var(--hs) var(--hl)),hsl(50 var(--hs) var(--hl)),hsl(130 var(--hs) var(--hl))); }
+  .insight { background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--bad); border-radius:14px; padding:12px 14px; margin-top:10px; font-size:14px; }
+  .insight b { font-weight:800; }
+  .pbar { display:flex; align-items:center; gap:10px; margin:8px 0; font-size:14px; }
+  .pbar .n { width:76px; font-weight:700; }
+  .pbar .v { width:42px; text-align:right; font-variant-numeric:tabular-nums; font-weight:800; }
+
+
+
+  /* roadmap */
+  .road { margin-top:16px; }
+  .rd { display:grid; grid-template-columns:44px 1fr; gap:10px; position:relative; padding-bottom:16px; }
+  .rd::before { content:''; position:absolute; left:20px; top:34px; bottom:-8px; width:4px; background:var(--line); border-radius:2px; }
+  .rd.last::before { display:none; }
+  .rd.trav::before { background:var(--good); }
+  .node { width:44px; height:44px; border-radius:50%; background:var(--surface2); border:3px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; z-index:1; }
+  .node.done { background:var(--good); border-color:var(--good); color:#fff; }
+  .node.cur { background:var(--primary); border-color:var(--primary); color:var(--primary-ink); box-shadow:0 0 0 5px var(--surface2); }
+  .rc { background:var(--surface); border:1px solid var(--line); border-left:6px solid var(--c); border-radius:18px; padding:13px 14px; }
+  .rc.cur { border:2px solid var(--primary); border-left:6px solid var(--c); }
+  .rc.lock { opacity:.62; }
+  .rc .ttl { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .rc .ttl b { font-size:20px; color:var(--c); }
+  .rc .ttl span { font-size:12.5px; color:var(--ink2); }
+  .gate { position:relative; height:14px; background:var(--surface2); border-radius:8px; margin-top:12px; }
+  .gate i { display:block; height:100%; border-radius:8px; background:var(--c); }
+  .gate b { position:absolute; top:-4px; bottom:-4px; left:90%; width:3px; background:var(--ink); border-radius:2px; }
+  .gl { display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink2); margin:4px 0 6px; font-variant-numeric:tabular-nums; }
+  .stages { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 12px; }
+  .stg { padding:6px 11px; border-radius:14px; background:var(--surface2); border:1.5px solid var(--line); font-weight:700; font-size:13px; }
+  .stg small { color:var(--ink3); font-weight:600; }
+  .stg.ok { border-color:var(--good); color:var(--good); }
+  .need { font-size:13px; color:var(--ink2); margin:2px 0 10px; }
+  .curcard { display:block; width:100%; text-align:left; background:var(--surface); border:2px solid var(--primary); border-radius:18px; padding:12px 14px; margin-top:12px; }
+
+
+  /* weekly report */
+  #rep { position:fixed; inset:0; background:var(--bg); z-index:55; overflow:auto;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); display:none; }
+  #rep.open { display:block; }
+  .repbox { background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px; margin-top:14px; }
+  .repbox h3 { margin:0 0 4px; font-size:16px; }
+  .kpis { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  .kpi { background:var(--surface2); border-radius:14px; padding:10px 12px; }
+  .kpi b { font-size:26px; display:block; line-height:1.2; font-variant-numeric:tabular-nums; }
+  .kpi span { font-size:12px; color:var(--ink2); }
+  .kpi em { display:block; font-style:normal; font-size:12px; font-weight:800; }
+  .up { color:var(--good); } .down { color:var(--bad); } .flat { color:var(--ink3); }
+  .days { display:flex; gap:6px; align-items:flex-end; height:120px; margin-top:12px; }
+  .days > div { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; font-size:11px; color:var(--ink2); gap:3px; font-variant-numeric:tabular-nums; }
+  .days i { display:block; width:100%; border-radius:6px 6px 0 0; background:var(--primary); min-height:4px; }
+  .days i.z { background:var(--line); }
+  .fld { width:100%; font:inherit; font-size:16px; padding:12px 14px; border:2px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); }
+  .lbl { display:block; font-weight:800; font-size:13px; margin:14px 0 6px; }
+  .subj { background:var(--surface2); border-radius:10px; padding:8px 12px; font-size:13px; color:var(--ink2); margin-top:10px; }
+  .kidmsg { background:var(--good-bg); border-radius:14px; padding:10px 14px; font-weight:700; margin-top:10px; }
+
+  /* AI analysis */
+  .ai { background:var(--surface); border:2px solid var(--primary); border-radius:20px; padding:16px; margin-top:18px; }
+  .ai h3 { margin:0 0 4px; font-size:16px; }
+  .ai .hl { font-size:18px; font-weight:800; line-height:1.4; margin:10px 0 6px; }
+  .ai .blk { margin-top:14px; }
+  .ai .blk > b { display:block; font-size:13px; color:var(--ink2); margin-bottom:6px; }
+  .ai .wk { background:var(--surface2); border-radius:14px; padding:10px 12px; margin-bottom:8px; font-size:14px; }
+  .ai .wk .tg { display:inline-block; font-size:12px; font-weight:800; background:var(--bad); color:#fff; border-radius:6px; padding:0 8px; margin-bottom:4px; }
+  .ai .wk .tp { color:var(--ink2); margin-top:2px; }
+  .ai ul { margin:0; padding-left:1.2em; font-size:14px; }
+  .ai .plan { display:block; width:100%; text-align:left; background:var(--primary); color:var(--primary-ink); border-radius:14px; padding:11px 14px; margin-bottom:8px; font-weight:700; font-size:14px; }
+  .ai .plan small { display:block; font-weight:500; opacity:.9; font-size:12.5px; }
+  .ai .kid { background:var(--good-bg); border-radius:14px; padding:10px 14px; font-weight:700; }
+  .ai .note { font-size:12px; color:var(--ink3); margin-top:12px; }
+  .ai .stale { font-size:12.5px; color:var(--warn); margin-top:10px; }
+
+  /* tab bar */
+  .tabbar { position:fixed; left:0; right:0; bottom:0; background:var(--surface); border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom,0px); z-index:20; }
+  .tabbar div { max-width:480px; margin:0 auto; display:flex; }
+  .tabbar button { flex:1; padding:9px 0 8px; font-size:11px; font-weight:700; color:var(--ink3); display:flex; flex-direction:column; align-items:center; gap:1px; }
+  .tabbar button span { font-size:21px; line-height:1.2; }
+  .tabbar button.on { color:var(--primary); }
+
+  /* quiz overlay */
+  #quiz { position:fixed; inset:0; background:var(--bg); z-index:50; overflow:auto;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); display:none; }
+  #quiz.open { display:block; }
+  .qtop { display:flex; align-items:center; gap:12px; padding:12px 16px 4px; max-width:480px; margin:0 auto; }
+  .qx { width:40px; height:40px; border-radius:50%; background:var(--surface2); font-size:18px; }
+  .qprog { flex:1; height:12px; background:var(--surface2); border-radius:8px; overflow:hidden; }
+  .qprog i { display:block; height:100%; background:var(--primary); border-radius:8px; transition:width .3s; }
+  .qn { font-size:13px; color:var(--ink2); font-variant-numeric:tabular-nums; width:44px; text-align:right; }
+  .qbody { max-width:480px; margin:0 auto; padding:14px 16px 40px; }
+  .qmode { font-size:13px; font-weight:700; color:var(--ink2); }
+  .qcard { background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:26px 18px; text-align:center; margin:8px 0 16px; }
+  .qcard .q { font-size:32px; font-weight:800; line-height:1.3; overflow-wrap:anywhere; }
+  .qcard .qj { font-size:26px; font-weight:800; line-height:1.4; }
+  .qcard .pat { font-size:20px; letter-spacing:.14em; color:var(--ink3); margin-top:10px; word-break:break-all; font-variant-numeric:tabular-nums; }
+  .qplay { width:76px; height:76px; border-radius:50%; background:var(--primary); color:var(--primary-ink); font-size:32px; }
+  .qplay.s { width:44px; height:44px; font-size:20px; background:var(--surface2); color:var(--ink); margin-top:10px; }
+  .ch { display:block; width:100%; min-height:58px; margin-bottom:10px; padding:12px 16px; border-radius:16px; background:var(--surface);
+    border:2px solid var(--line); font-weight:700; font-size:17px; text-align:left; }
+  .ch.ok { background:var(--good-bg); border-color:var(--good); }
+  .ch.ng { background:var(--bad-bg); border-color:var(--bad); }
+  .ch[disabled] { cursor:default; }
+  .inp { width:100%; font:inherit; font-size:22px; font-weight:700; padding:14px 16px; border-radius:16px; border:2px solid var(--line);
+    background:var(--surface); color:var(--ink); margin-bottom:10px; }
+  .fb { border-radius:16px; padding:14px 16px; margin:4px 0 12px; }
+  .fb.ok { background:var(--good-bg); } .fb.ng { background:var(--bad-bg); }
+  .fb .t { font-weight:800; font-size:17px; }
+  .fb .a { font-size:20px; font-weight:800; margin-top:4px; overflow-wrap:anywhere; }
+  .score { font-size:56px; font-weight:800; text-align:center; line-height:1.1; margin:18px 0 0; font-variant-numeric:tabular-nums; }
+  .score small { font-size:22px; color:var(--ink2); }
+
+  /* sheet */
+  #bd { position:fixed; inset:0; background:rgba(8,12,24,.5); z-index:60; display:none; }
+  #sheet { position:fixed; left:0; right:0; bottom:0; z-index:61; background:var(--bg); border-radius:24px 24px 0 0;
+    max-height:82%; overflow:auto; padding:8px 16px calc(20px + env(safe-area-inset-bottom,0px)); display:none; }
+  #sheet .in { max-width:480px; margin:0 auto; }
+  #sheet .grab { width:44px; height:5px; border-radius:3px; background:var(--line); margin:4px auto 12px; }
+  body.sheet-open #bd, body.sheet-open #sheet { display:block; }
+  .empty { text-align:center; color:var(--ink2); padding:24px 8px; font-size:14px; }
+  @media (prefers-reduced-motion: reduce) { .qprog i { transition:none; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<nav class="tabbar"><div id="tabs"></div></nav>
+<div id="quiz"></div>
+<div id="rep"></div>
+<div id="bd" onclick="closeSheet()"></div>
+<div id="sheet"><div class="in" id="sheetIn"></div></div>
+
+<script>
+/* ============ データ ============ */
+const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
+const TYPES = { word:'単語', phrase:'熟語', idiom:'イディオム' };
+const THEMES = ['たべもの','どうぶつ','がっこう','ばしょ','いろ・ようす','うごき','きもち','かいわ'];
+// [英語, 日本語, 英検の級, 種類, テーマ]
+const RAW = [
+['apple','りんご',5,'word','たべもの'],['milk','牛乳',5,'word','たべもの'],['bread','パン',5,'word','たべもの'],
+['vegetable','野菜',4,'word','たべもの'],['delicious','おいしい',4,'word','たべもの'],['have breakfast','朝食をとる',4,'phrase','たべもの'],
+['dessert','デザート',3,'word','たべもの'],['a piece of cake','朝飯前',3,'idiom','たべもの'],
+['dog','犬',5,'word','どうぶつ'],['cat','ねこ',5,'word','どうぶつ'],['bird','鳥',5,'word','どうぶつ'],['rabbit','うさぎ',5,'word','どうぶつ'],
+['elephant','ぞう',5,'word','どうぶつ'],['insect','昆虫',3,'word','どうぶつ'],['walk the dog','犬を散歩させる',4,'phrase','どうぶつ'],
+['raining cats and dogs','どしゃ降り',3,'idiom','どうぶつ'],
+['school','学校',5,'word','がっこう'],['teacher','先生',5,'word','がっこう'],['desk','机',5,'word','がっこう'],['notebook','ノート',5,'word','がっこう'],
+['homework','宿題',4,'word','がっこう'],['subject','教科',4,'word','がっこう'],['go to school','学校へ行く',5,'phrase','がっこう'],
+['be good at','〜が得意だ',4,'phrase','がっこう'],['take a test','テストを受ける',4,'phrase','がっこう'],['graduate','卒業する',3,'word','がっこう'],
+['library','図書館',4,'word','ばしょ'],['station','駅',4,'word','ばしょ'],['museum','博物館',4,'word','ばしょ'],['restaurant','レストラン',4,'word','ばしょ'],
+['hospital','病院',4,'word','ばしょ'],['next to','〜のとなりに',5,'phrase','ばしょ'],['far from','〜から遠い',4,'phrase','ばしょ'],
+['environment','環境',3,'word','ばしょ'],['on the way to','〜へ行く途中で',3,'phrase','ばしょ'],
+['red','赤い',5,'word','いろ・ようす'],['blue','青い',5,'word','いろ・ようす'],['big','大きい',5,'word','いろ・ようす'],['small','小さい',5,'word','いろ・ようす'],
+['beautiful','美しい',4,'word','いろ・ようす'],['difficult','むずかしい',4,'word','いろ・ようす'],['dangerous','危険な',4,'word','いろ・ようす'],
+['important','重要な',3,'word','いろ・ようす'],['useful','役に立つ',3,'word','いろ・ようす'],
+['run','走る',5,'word','うごき'],['swim','泳ぐ',5,'word','うごき'],['eat','食べる',5,'word','うごき'],['visit','訪ねる',4,'word','うごき'],
+['remember','覚えている',4,'word','うごき'],['borrow','借りる',4,'word','うごき'],['decide','決める',3,'word','うごき'],
+['get up','起きる',5,'phrase','うごき'],['look at','〜を見る',5,'phrase','うごき'],['look for','〜を探す',4,'phrase','うごき'],
+['take care of','〜の世話をする',3,'phrase','うごき'],['look forward to','〜を楽しみにする',3,'phrase','うごき'],['make friends with','〜と友だちになる',3,'phrase','うごき'],
+['happy','うれしい',5,'word','きもち'],['sad','悲しい',5,'word','きもち'],['tired','つかれた',5,'word','きもち'],['hungry','おなかがすいた',5,'word','きもち'],
+['excited','わくわくした',4,'word','きもち'],['be interested in','〜に興味がある',3,'phrase','きもち'],['be afraid of','〜をこわがる',3,'phrase','きもち'],
+['See you later','またね',5,'idiom','かいわ'],['Nice to meet you','はじめまして',5,'idiom','かいわ'],['How about you?','あなたはどう？',5,'idiom','かいわ'],
+['Thank you very much','どうもありがとう',5,'idiom','かいわ'],['Here you are','はい、どうぞ',4,'idiom','かいわ'],['Just a moment','ちょっと待って',4,'idiom','かいわ'],
+['Good luck','がんばって',4,'idiom','かいわ'],['Take it easy','気楽にね',3,'idiom','かいわ'],['once in a while','ときどき',3,'idiom','かいわ'],
+['break a leg','がんばって（幸運を）',3,'idiom','かいわ'],
+['vegetarian','菜食主義者',25,'word','たべもの'],['journey','旅',25,'word','ばしょ'],['abroad','海外へ',25,'word','ばしょ'],['appreciate','感謝する',25,'word','きもち'],
+['recommend','すすめる',25,'word','うごき'],['be famous for','〜で有名だ',25,'phrase','いろ・ようす'],['take part in','〜に参加する',25,'phrase','うごき'],
+['by mistake','まちがって',25,'phrase','かいわ'],['It depends.','場合による',25,'idiom','かいわ'],
+['agriculture','農業',2,'word','たべもの'],['sustainable','持続可能な',2,'word','いろ・ようす'],['achieve','達成する',2,'word','うごき'],['reduce','減らす',2,'word','うごき'],
+['curious','好奇心の強い',2,'word','きもち'],['be responsible for','〜に責任がある',2,'phrase','がっこう'],['come up with','〜を思いつく',2,'phrase','うごき'],
+['as a result of','〜の結果として',2,'phrase','かいわ'],['in the long run','長い目で見れば',2,'idiom','かいわ'],
+['conservation','保護',15,'word','どうぶつ'],['curriculum','教育課程',15,'word','がっこう'],['inevitable','避けられない',15,'word','いろ・ようす'],['hesitate','ためらう',15,'word','きもち'],
+['reluctant','気が進まない',15,'word','きもち'],['sustain','維持する',15,'word','うごき'],['bring about','〜をもたらす',15,'phrase','うごき'],
+['take for granted','〜を当然と思う',15,'idiom','かいわ'],['at the expense of','〜を犠牲にして',15,'idiom','かいわ']
+];
+// 級の順番（下から上へ進む）。25=準2級, 15=準1級
+const LVORD = [5,4,3,25,2,15];
+const LVN = {5:'5級',4:'4級',3:'3級',25:'準2級',2:'2級',15:'準1級'};
+const LVDESC = {5:'中学初級程度',4:'中学中級程度',3:'中学卒業程度',25:'高校中級程度',2:'高校卒業程度',15:'大学中級程度'};
+const GATE = 0.9, MINSEEN = 3;
+const D = RAW.map((r,i)=>({id:i+1,en:r[0],ja:r[1],lv:r[2],type:r[3],theme:r[4]}));
+const byId = id => D.find(d=>d.id===id);
+
+/* ============ 状態 ============ */
+const KEY = 'eitan-radar-mock-v4';
+let S = { stats:{}, recent:[], today:0, days:4 };
+let UI = { tab:'home', lv:'all', wlv:'all', wtype:'all' };
+let C = { lv:[5,4], types:['word','phrase','idiom'], mode:'mix', prio:'weak', n:10 };
+let Q = null;
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function load(){
+  try{ const r = localStorage.getItem(KEY); if(r){ S = JSON.parse(r); if(!S.cleared) S.cleared={}; if(!S.sessions) S.sessions=[]; S.report = Object.assign(repDef(), S.report||{}); return; } }catch(e){}
+  seed();
+}
+function rng(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function seed(){
+  const r = rng(11);
+  S = { stats:{}, recent:[], today:3, days:4, cleared:{}, unlockAll:false };
+  const base = { en2ja:.9, ja2en:.68, spell:.5 };
+  for(const d of D){
+    const oi = LVORD.indexOf(d.lv);
+    if(oi>=2) continue;
+    if(oi===1 && r()<.25) continue;
+    S.stats[d.id] = {};
+    for(const m in MODES){
+      if(oi===1 && r()<.12) continue;
+      let ab = oi===0 ? {en2ja:.98,ja2en:.95,spell:.88}[m] : base[m];
+      const k = oi===0 ? .4 : 1;
+      if(d.theme==='うごき') ab -= (m==='spell'?.25:.1)*k;
+      if(d.theme==='ばしょ' && m==='spell') ab -= .22*k;
+      if(d.type==='idiom') ab -= .1*k; if(d.type==='phrase') ab -= .05*k;
+      ab = Math.min(.97, Math.max(.1, ab));
+      const n = oi===0 ? 3+Math.floor(r()*3) : 2+Math.floor(r()*4); let c = 0;
+      for(let q=0;q<n;q++) if(r()<ab) c++;
+      S.stats[d.id][m] = { s:n, c };
+    }
+  }
+  // 5級はクリア済みの状態にそろえる
+  for(let guard=0; guard<500 && lvStat(5).acc<.92; guard++){
+    for(const d of D.filter(d=>d.lv===5)){ for(const m in MODES){ const x=S.stats[d.id][m]; if(x.c<x.s){ x.c++; break; } } if(lvStat(5).acc>=.92) break; }
+  }
+  const weak = D.filter(d=>{ const a = accOf(itemAgg(d.id)); return a!==null && a<.5; }).slice(0,6);
+  S.recent = weak.map(d=>d.id);
+  // 1週間レポート用のデモ履歴（直近14日）
+  const rs = rng(5), pm = { en2ja:.92, ja2en:.72, spell:.5 };
+  S.sessions = [];
+  for(let i=13;i>=0;i--){
+    if(i>0 && rs()<.25) continue;
+    const n = rs()<.3 ? 20 : 10, bm = {}; let c = 0;
+    for(let q=0;q<n;q++){
+      const u = rs(), m = u<.4?'en2ja':u<.7?'ja2en':'spell';
+      const ok = rs() < Math.min(.97, pm[m] + (i<7?.03:-.03));
+      (bm[m] = bm[m]||[0,0])[0]++; if(ok){ bm[m][1]++; c++; }
+    }
+    S.sessions.push({ d:ymd(daysAgo(i)), n, c, sec:n*(16+Math.floor(rs()*14)), bm });
+  }
+  S.todayD = ymd(); S.today = S.sessions.filter(x=>x.d===ymd()).reduce((a,x)=>a+x.n,0);
+  S.report = repDef();
+  syncClears();
+  save();
+}
+
+/* ============ 集計 ============ */
+const st = (id,m) => (S.stats[id] && S.stats[id][m]) || {s:0,c:0};
+function itemAgg(id){ let s=0,c=0; for(const m in MODES){ const x=st(id,m); s+=x.s; c+=x.c; } return {s,c}; }
+const accOf = x => x.s ? x.c/x.s : null;
+const filt = lv => D.filter(d => lv==='all' || d.lv==lv);
+function cellAgg(theme, mode, lv){
+  let s=0,c=0;
+  for(const d of filt(lv)){ if(theme && d.theme!==theme) continue; const x=st(d.id,mode); s+=x.s; c+=x.c; }
+  return {s,c};
+}
+function weakestCell(lv){
+  let best=null;
+  for(const t of THEMES) for(const m in MODES){
+    const x = cellAgg(t,m,lv); if(x.s<6) continue;
+    const a = x.c/x.s; if(!best || a<best.a) best = {t,m,a,s:x.s};
+  }
+  return best;
+}
+const pct = a => Math.round(a*100);
+const heat = a => `--h:${Math.round(4+a*126)}`;
+const mastered = d => { const x=itemAgg(d.id); return x.s>=3 && x.c/x.s>=.8; };
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function speak(t){
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=.85; speechSynthesis.speak(u); }catch(e){}
+}
+const speakId = id => speak(byId(id).en);
+
+
+/* ============ ロードマップ判定 ============ */
+function lvStat(l){
+  const it = D.filter(d=>d.lv===l); let s=0,c=0,seen3=0;
+  it.forEach(d=>{ const x=itemAgg(d.id); s+=x.s; c+=x.c; if(x.s>=MINSEEN) seen3++; });
+  return { n:it.length, s, seen3, acc:s?c/s:0 };
+}
+function stageStat(l,t){
+  const it = D.filter(d=>d.lv===l && d.theme===t); let s=0,c=0,seen3=0;
+  it.forEach(d=>{ const x=itemAgg(d.id); s+=x.s; c+=x.c; if(x.s>=MINSEEN) seen3++; });
+  return { n:it.length, acc:s?c/s:0, ok: it.length>0 && seen3===it.length && s>0 && c/s>=GATE };
+}
+const lvCleared = l => { const x=lvStat(l); return x.n>0 && x.seen3===x.n && x.acc>=GATE; };
+function curLv(){ for(const l of LVORD) if(!(S.cleared&&S.cleared[l])) return l; return null; }
+const isOpen = l => !!(S.unlockAll || (S.cleared&&S.cleared[l]) || l===curLv());
+function syncClears(){
+  S.cleared = S.cleared || {}; const nw = [];
+  for(const l of LVORD){ if(S.cleared[l]) continue; if(lvCleared(l)){ S.cleared[l]=true; nw.push(l); } else break; }
+  if(nw.length) save();
+  return nw;
+}
+
+/* ============ 共通パーツ ============ */
+function dots(id){
+  return `<div class="dots">${Object.keys(MODES).map(m=>{
+    const x=st(id,m); return x.s ? `<i class="h" style="${heat(x.c/x.s)}"></i>` : `<i class="n"></i>`;
+  }).join('')}</div>`;
+}
+function wordRow(d, onclick){
+  return `<div class="wr" ${onclick?`onclick="${onclick}" style="cursor:pointer"`:''}>
+    <div class="w"><div class="en"><span class="tag l${d.lv}">${LVN[d.lv]}</span>${esc(d.en)}</div>
+    <div class="ja">${esc(d.ja)}・${TYPES[d.type]}・${d.theme}</div>${dots(d.id)}</div>
+    <button class="spk" aria-label="発音" onclick="event.stopPropagation();speakId(${d.id})">🔊</button></div>`;
+}
+function seg(items, cur, fn){
+  return `<div class="seg">${items.map(([v,l])=>`<button class="${String(cur)===String(v)?'on':''}" onclick="${fn}('${v}')">${l}</button>`).join('')}</div>`;
+}
+const LVSEG = [['all','ぜんぶ'],...LVORD.map(l=>[String(l),LVN[l]])];
+
+/* ============ 画面 ============ */
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = ({home:vHome, road:vRoadmap, practice:vPractice, weak:vWeak, book:vBook})[UI.tab]();
+  document.getElementById('tabs').innerHTML = [['home','🏠','ホーム'],['road','🚩','ロードマップ'],['practice','✏️','れんしゅう'],['weak','📡','弱点'],['book','📖','単語帳']]
+    .map(([k,i,l])=>`<button class="${UI.tab===k?'on':''}" onclick="go('${k}')"><span>${i}</span>${l}</button>`).join('');
+}
+function go(t){ UI.tab=t; render(); window.scrollTo(0,0); if(t==='road'){ const e=document.getElementById('cur'); if(e) e.scrollIntoView({block:'center'}); } }
+
+function vHome(){
+  const w = weakestCell('all');
+  const lvRows = LVORD.map(l=>{
+    const items = D.filter(d=>d.lv===l), m = items.filter(mastered).length, op = isOpen(l);
+    return `<div class="lv" style="${op?'':'opacity:.5'}"><div class="lv-name" style="color:var(--lv${l})">${op?'':'🔒'}${LVN[l]}</div>
+      <div class="bar"><i style="width:${m/items.length*100}%;background:var(--lv${l})"></i></div>
+      <div class="lv-n">${m} / ${items.length}</div></div>`;
+  }).join('');
+  const recent = S.recent.slice(0,3).map(id=>wordRow(byId(id))).join('');
+  return `
+  <div class="mock">🧪 モック表示：成績はデモデータです（弱点マップで初期化できます）</div>
+  <h1>えいたんレーダー</h1>
+  <p class="sub">英検5級〜準1級。苦手を見つけて、つぶして、次の級へ。</p>
+  ${w ? `<div class="hero"><small>いま いちばん苦手なところ</small>
+    <div class="big">${w.t} × ${MODES[w.m]}</div>
+    <div class="pct">正答率 ${pct(w.a)}%（${w.s}回の挑戦から）</div>
+    <button class="btn btn-light" onclick="practiceCell('${w.t}','${w.m}','all')">ここを10問れんしゅう</button></div>`
+  : `<div class="hero"><div class="big">まず10問やってみよう</div><div class="pct">答えるほど、苦手が見えてきます</div>
+    <button class="btn btn-light" onclick="go('practice')">はじめる</button></div>`}
+  ${curCard()}
+  ${reportCard()}
+  <div class="stat">
+    <div><b>${S.today}</b><span>きょうの問題数</span></div>
+    <div><b>${streak()}</b><span>れんぞく日数</span></div>
+    <div><b>${D.filter(mastered).length}</b><span>おぼえた語</span></div>
+  </div>
+  <h2>級ごとの「おぼえた」</h2>${lvRows}
+  <p class="sub">3回以上こたえて、正答率80%以上で「おぼえた」</p>
+  <h2>さいきん まちがえた語</h2>
+  <div class="list">${recent || '<div class="empty">まだありません</div>'}</div>`;
+}
+
+function vPractice(){
+  const chip = (arr, v, fn, label) => `<button class="chip ${arr.includes(v)?'on':''}" onclick="${fn}('${v}')">${label}</button>`;
+  return `
+  <h1>れんしゅう</h1><p class="sub">範囲と出し方をえらんでスタート（解放した級だけ選べます）</p>
+  <div style="height:16px"></div>
+  <div class="field"><label>級</label><div class="chips">${LVORD.map(l=> isOpen(l) ? chip(C.lv,l,'togLv',LVN[l]) : `<button class="chip" disabled style="opacity:.45">🔒 ${LVN[l]}</button>`).join('')}</div></div>
+  <div class="field"><label>種類</label><div class="chips">${Object.keys(TYPES).map(t=>chip(C.types,t,'togType',TYPES[t])).join('')}</div></div>
+  <div class="field"><label>問題の形</label>
+    <div class="chips">${[['mix','ミックス'],...Object.entries(MODES)].map(([k,l])=>`<button class="chip ${C.mode===k?'on':''}" onclick="setC('mode','${k}')">${l}</button>`).join('')}</div></div>
+  <div class="field"><label>出し方</label>
+    <div class="chips">${[['weak','苦手をおおめに'],['all','ぜんぶ同じ'],['new','まだやってない語']].map(([k,l])=>`<button class="chip ${C.prio===k?'on':''}" onclick="setC('prio','${k}')">${l}</button>`).join('')}</div></div>
+  <div class="field"><label>問題数</label>
+    <div class="chips">${[5,10,20].map(n=>`<button class="chip ${C.n===n?'on':''}" onclick="setC('n',${n})">${n}問</button>`).join('')}</div></div>
+  <button class="btn btn-main" onclick="startFromConfig()">スタート</button>`;
+}
+function togLv(v){ v=+v; C.lv = C.lv.includes(v) ? (C.lv.length>1 ? C.lv.filter(x=>x!==v) : C.lv) : [...C.lv,v]; render(); }
+function togType(v){ C.types = C.types.includes(v) ? (C.types.length>1 ? C.types.filter(x=>x!==v) : C.types) : [...C.types,v]; render(); }
+function setC(k,v){ C[k]=v; render(); }
+
+function vWeak(){
+  const lv = UI.lv, w = weakestCell(lv);
+  let grid = `<div></div>` + Object.values(MODES).map(m=>`<div class="hd">${m}</div>`).join('');
+  for(const t of THEMES){
+    grid += `<div class="rl">${t}</div>`;
+    for(const m in MODES){
+      const x = cellAgg(t,m,lv);
+      grid += x.s>=3
+        ? `<button class="cell" style="${heat(x.c/x.s)}" onclick="openCell('${t}','${m}')">${pct(x.c/x.s)}</button>`
+        : `<button class="cell none" onclick="openCell('${t}','${m}')">–</button>`;
+    }
+  }
+  const typeBars = Object.keys(TYPES).map(k=>{
+    let s=0,c=0; for(const d of filt(lv)) if(d.type===k) for(const m in MODES){ const x=st(d.id,m); s+=x.s; c+=x.c; }
+    const a = s? c/s : null;
+    return `<div class="pbar"><div class="n">${TYPES[k]}</div><div class="bar"><i style="width:${a===null?0:a*100}%;background:hsl(${a===null?0:4+a*126} 70% 50%)"></i></div><div class="v">${a===null?'–':pct(a)+'%'}</div></div>`;
+  }).join('');
+  const modeBars = Object.keys(MODES).map(m=>{
+    const x = cellAgg(null,m,lv), a = x.s? x.c/x.s : null;
+    return `<div class="pbar"><div class="n">${MODES[m]}</div><div class="bar"><i style="width:${a===null?0:a*100}%;background:hsl(${a===null?0:4+a*126} 70% 50%)"></i></div><div class="v">${a===null?'–':pct(a)+'%'}</div></div>`;
+  }).join('');
+  const top = filt(lv).map(d=>({d,a:accOf(itemAgg(d.id)),s:itemAgg(d.id).s})).filter(o=>o.a!==null && o.s>=4).sort((a,b)=>a.a-b.a).slice(0,5);
+  return `
+  <h1>弱点マップ</h1><p class="sub">テーマ × 問題の形ごとの正答率。タップで中身を見られます。</p>
+  <div style="height:12px"></div>${seg(LVSEG, lv, 'setLv')}
+  ${w ? `<div class="insight">いちばん苦手なのは <b>${w.t} の ${MODES[w.m]}</b>（${pct(w.a)}%）。ここから つぶすのが近道です。</div>` : ''}
+  <div class="heat">${grid}</div>
+  <div class="legend"><span>にがて</span><i></i><span>とくい</span></div>
+  <p class="sub" style="margin-top:6px">灰色＝まだデータが少ない（3回未満）</p>
+  ${aiCard()}
+  <h2>問題の形べつ</h2>${modeBars}
+  <h2>種類べつ</h2>${typeBars}
+  <h2>苦手ワード ワースト5</h2>
+  <div class="list">${top.map(o=>wordRow(o.d,`openWord(${o.d.id})`)).join('') || '<div class="empty">データがたまると表示されます</div>'}</div>
+  <div style="height:22px"></div>
+  <button class="btn btn-sub" onclick="resetDemo()">デモデータに戻す</button>`;
+}
+function setLv(v){ UI.lv=v; render(); }
+
+function vBook(){
+  const list = D.filter(d => (UI.wlv==='all'||d.lv==UI.wlv) && (UI.wtype==='all'||d.type===UI.wtype));
+  return `
+  <h1>単語帳</h1><p class="sub">${list.length}語 ・ 下の3本の線は「英→和／和→英／スペル」の出来ぐあい</p>
+  <div style="height:12px"></div>${seg(LVSEG, UI.wlv, 'setWlv')}
+  <div style="height:8px"></div>${seg([['all','ぜんぶ'],...Object.entries(TYPES)], UI.wtype, 'setWtype')}
+  <div style="height:12px"></div>
+  <div class="list">${list.map(d=>wordRow(d,`openWord(${d.id})`)).join('')}</div>`;
+}
+function setWlv(v){ UI.wlv=v; render(); }
+function setWtype(v){ UI.wtype=v; render(); }
+
+/* ============ シート ============ */
+function openSheet(html){ document.getElementById('sheetIn').innerHTML = '<div class="grab"></div>'+html; document.body.classList.add('sheet-open'); }
+function closeSheet(){ document.body.classList.remove('sheet-open'); }
+function openCell(t,m){
+  const lv = UI.lv, x = cellAgg(t,m,lv);
+  const items = filt(lv).filter(d=>d.theme===t).map(d=>({d,x:st(d.id,m)})).sort((a,b)=>{
+    const aa=a.x.s?a.x.c/a.x.s:2, bb=b.x.s?b.x.c/b.x.s:2; return aa-bb; });
+  openSheet(`<h1>${t} × ${MODES[m]}</h1>
+    <p class="sub">${x.s? `正答率 ${pct(x.c/x.s)}%（${x.c}/${x.s}）` : 'まだデータがありません'}</p>
+    <div style="height:12px"></div>
+    <div class="list">${items.map(({d,x})=>`<div class="wr"><div class="w"><div class="en"><span class="tag l${d.lv}">${LVN[d.lv]}</span>${esc(d.en)}</div><div class="ja">${esc(d.ja)}</div></div>
+      <div style="font-weight:800;font-variant-numeric:tabular-nums;${x.s?`color:hsl(${4+x.c/x.s*126} 65% 42%)`:'color:var(--ink3)'}">${x.s? x.c+'/'+x.s : '未'}</div></div>`).join('')}</div>
+    <div style="height:14px"></div>
+    <button class="btn btn-main" onclick="practiceCell('${t}','${m}','${lv}')">このマスを れんしゅう</button>`);
+}
+function openWord(id){
+  const d = byId(id);
+  openSheet(`<h1>${esc(d.en)}</h1><p class="sub">${esc(d.ja)} ・ ${LVN[d.lv]} ・ ${TYPES[d.type]} ・ ${d.theme}</p>
+    <div style="height:12px"></div>
+    ${Object.keys(MODES).map(m=>{ const x=st(id,m), a=x.s?x.c/x.s:null;
+      return `<div class="pbar"><div class="n">${MODES[m]}</div><div class="bar"><i style="width:${a===null?0:a*100}%;background:hsl(${a===null?0:4+a*126} 70% 50%)"></i></div><div class="v">${a===null?'未':x.c+'/'+x.s}</div></div>`; }).join('')}
+    <div style="height:14px"></div>
+    <div class="row2"><button class="btn btn-sub" onclick="speakId(${id})">🔊 きく</button>
+    ${isOpen(d.lv) ? `<button class="btn btn-main" onclick="startQuiz([byId(${id}),...D.filter(o=>o.theme===byId(${id}).theme&&o.id!==${id}&&isOpen(o.lv)).slice(0,5)],{mode:'mix',n:6,prio:'weak'});closeSheet()">この語を れんしゅう</button>` : `<button class="btn btn-sub" disabled>🔒 ${LVN[d.lv]}はロック中</button>`}</div>`);
+}
+function resetDemo(){ seed(); render(); }
+
+/* ============ クイズ ============ */
+function practiceCell(t,m,lv){
+  closeSheet();
+  const pool = filt(lv).filter(d=>d.theme===t && isOpen(d.lv));
+  if(!pool.length) return;
+  startQuiz(pool,{mode:m,n:Math.min(10,pool.length),prio:'weak'});
+}
+function startFromConfig(){
+  let pool = D.filter(d=>C.lv.includes(d.lv) && isOpen(d.lv) && C.types.includes(d.type));
+  if(!pool.length) pool = D.filter(d=>isOpen(d.lv) && C.types.includes(d.type));
+  if(C.prio==='new'){ const nw = pool.filter(d=>!itemAgg(d.id).s); if(nw.length>=3) pool = nw; }
+  startQuiz(pool,{mode:C.mode,n:Math.min(C.n,pool.length),prio:C.prio});
+}
+function wpick(arr, wf){
+  const w = arr.map(wf), tot = w.reduce((a,b)=>a+b,0); let r = Math.random()*tot;
+  for(let i=0;i<arr.length;i++){ r-=w[i]; if(r<=0) return i; } return arr.length-1;
+}
+function pickMode(d){
+  const ms = Object.keys(MODES).filter(m => m!=='spell' || d.en.length<=24);
+  return ms[wpick(ms, m=>{ const x=st(d.id,m); return x.s ? (1-x.c/x.s)+.25 : .6; })];
+}
+function startQuiz(pool, o){
+  let rest = [...pool], picked = [];
+  const n = Math.min(o.n, rest.length);
+  while(picked.length<n){
+    const i = o.prio==='weak' ? wpick(rest, d=>{ const a=accOf(itemAgg(d.id)); return a===null?1.6:1+3*(1-a); }) : Math.floor(Math.random()*rest.length);
+    picked.push(rest.splice(i,1)[0]);
+  }
+  const qs = picked.map(d=>{
+    let mode = o.mode==='mix' ? pickMode(d) : o.mode;
+    if(mode==='spell' && d.en.length>24) mode='en2ja';
+    const q = {d,mode};
+    if(mode!=='spell'){
+      const others = D.filter(x=>x.id!==d.id && x.type===d.type && x.ja!==d.ja && x.en!==d.en)
+        .sort(()=>Math.random()-.5).sort((a,b)=>(a.lv===d.lv?0:1)-(b.lv===d.lv?0:1)).slice(0,3);
+      const key = mode==='ja2en' ? 'en' : 'ja';
+      q.choices = [...others.map(x=>({t:x[key],ok:false})), {t:d[key],ok:true}].sort(()=>Math.random()-.5);
+    }
+    return q;
+  });
+  Q = { qs, i:0, correct:0, wrong:[], done:false, ans:null, t0:Date.now(), bm:{} };
+  document.getElementById('quiz').classList.add('open');
+  renderQ();
+}
+function closeQuiz(){ logSession(); document.getElementById('quiz').classList.remove('open'); try{speechSynthesis.cancel();}catch(e){} Q=null; render(); }
+
+function renderQ(){
+  const el = document.getElementById('quiz');
+  if(Q.i>=Q.qs.length) return renderResult();
+  const q = Q.qs[Q.i], d = q.d;
+  const top = `<div class="qtop"><button class="qx" aria-label="やめる" onclick="closeQuiz()">✕</button>
+    <div class="qprog"><i style="width:${Q.i/Q.qs.length*100}%"></i></div><div class="qn">${Q.i+1}/${Q.qs.length}</div></div>`;
+  let body = '';
+  if(q.mode==='en2ja') body = `<div class="qmode">この英語の意味は？</div>
+    <div class="qcard"><div class="q">${esc(d.en)}</div><button class="qplay s" aria-label="発音" onclick="speakId(${d.id})">🔊</button></div>${choiceHtml(q)}`;
+  if(q.mode==='ja2en') body = `<div class="qmode">英語でいうと？</div>
+    <div class="qcard"><div class="qj">${esc(d.ja)}</div></div>${choiceHtml(q)}`;
+  if(q.mode==='spell'){
+    const pat = d.en.split('').map(c=>c===' '?'　':'＿').join(' ');
+    body = `<div class="qmode">つづりを書こう</div>
+    <div class="qcard"><div class="qj">${esc(d.ja)}</div><div class="pat">${pat}</div><button class="qplay s" aria-label="発音" onclick="speakId(${d.id})">🔊</button></div>
+    ${Q.ans===null ? `<input class="inp" id="spin" type="text" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off" placeholder="えいごで入力" onkeydown="if(event.key==='Enter')submitSpell()">
+    <button class="btn btn-main" onclick="submitSpell()">こたえる</button>` : ''}`;
+  }
+  let fb = '';
+  if(Q.ans!==null){
+    const ok = Q.ans.ok;
+    fb = `<div class="fb ${ok?'ok':'ng'}"><div class="t">${ok?'せいかい！':'おしい！ こたえは…'}</div>
+      <div class="a">${esc(d.en)}</div><div>${esc(d.ja)}</div>
+      ${!ok && q.mode==='spell' ? `<div class="sub" style="margin-top:6px">あなたの答え：${esc(Q.ans.val||'（空）')}</div>`:''}</div>
+      <div class="row2"><button class="btn btn-sub" onclick="speakId(${d.id})">🔊 きく</button>
+      <button class="btn btn-main" onclick="nextQ()">${Q.i+1>=Q.qs.length?'けっかを見る':'つぎへ'}</button></div>`;
+  }
+  el.innerHTML = top + `<div class="qbody">${body}${fb}</div>`;
+  if(q.mode==='spell' && Q.ans===null){ const i=document.getElementById('spin'); if(i) setTimeout(()=>i.focus(),50); }
+  el.scrollTop = 0;
+}
+function choiceHtml(q){
+  return q.choices.map((c,i)=>{
+    let cls = '', dis = '';
+    if(Q.ans!==null){ dis='disabled'; if(c.ok) cls='ok'; else if(Q.ans.idx===i) cls='ng'; }
+    return `<button class="ch ${cls}" ${dis} onclick="pick(${i})">${esc(c.t)}</button>`;
+  }).join('');
+}
+function record(d, mode, ok){
+  S.stats[d.id] = S.stats[d.id] || {};
+  const x = S.stats[d.id][mode] || {s:0,c:0};
+  x.s++; if(ok) x.c++; S.stats[d.id][mode] = x;
+  const kd = ymd(); if(S.todayD!==kd){ S.today=0; S.todayD=kd; }
+  S.today++;
+  Q.bm = Q.bm||{}; (Q.bm[mode] = Q.bm[mode]||[0,0])[0]++; if(ok) Q.bm[mode][1]++;
+  if(!ok){ S.recent = [d.id, ...S.recent.filter(i=>i!==d.id)].slice(0,12); Q.wrong.push(d); } else Q.correct++;
+  save();
+}
+function pick(i){
+  if(Q.ans!==null) return;
+  const q = Q.qs[Q.i], ok = q.choices[i].ok;
+  Q.ans = {ok, idx:i}; record(q.d, q.mode, ok); renderQ();
+}
+const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
+function submitSpell(){
+  if(Q.ans!==null) return;
+  const q = Q.qs[Q.i], val = document.getElementById('spin').value;
+  const ok = norm(val)===norm(q.d.en);
+  Q.ans = {ok, val}; record(q.d, 'spell', ok); renderQ();
+}
+function nextQ(){ Q.i++; Q.ans=null; renderQ(); }
+function renderResult(){
+  const n = Q.qs.length, c = Q.correct, p = c/n;
+  logSession();
+  const newly = syncClears();
+  const banner = newly.length ? `<div class="ai" style="text-align:center"><div class="hl">🎉 ${newly.map(l=>LVN[l]).join('・')}クリア！</div>
+    <p class="sub">${curLv()===null?'ぜんぶの級をクリアしました！':LVN[curLv()]+'が解放されました'}</p>
+    <div style="height:10px"></div><button class="btn btn-main" onclick="closeQuiz();go('road')">ロードマップを見る</button></div>` : '';
+  const msg = p>=.9 ? 'すばらしい！' : p>=.7 ? 'いいちょうし！' : p>=.4 ? 'あと少し！ まちがえた語を つぶそう' : 'まちがえた所が、のびしろ！';
+  document.getElementById('quiz').innerHTML = `<div class="qtop"><button class="qx" aria-label="とじる" onclick="closeQuiz()">✕</button><div style="flex:1"></div></div>
+  <div class="qbody"><div class="score">${c}<small> / ${n}</small></div>
+  <p class="sub" style="text-align:center;font-size:16px;font-weight:700;color:var(--ink)">${msg}</p>
+  ${banner}
+  ${Q.wrong.length ? `<h2>まちがえた語</h2><div class="list">${Q.wrong.map(d=>wordRow(d)).join('')}</div>` : ''}
+  <p class="sub" style="margin:12px 0 16px">結果は弱点マップに反映されました。</p>
+  <div class="row2" style="margin-bottom:10px">
+    ${Q.wrong.length ? `<button class="btn btn-main" onclick="retryWrong()">まちがいを もういちど</button>` : ''}
+    <button class="btn btn-sub" onclick="closeQuiz();go('weak')">弱点マップを見る</button></div>
+  <button class="btn btn-sub" onclick="closeQuiz();go('home')">ホームへ</button></div>`;
+}
+function retryWrong(){ const w = Q.wrong; startQuiz(w,{mode:'mix',n:w.length,prio:'all'}); }
+
+
+
+/* ============ ロードマップ画面 ============ */
+function curCard(){
+  syncClears();
+  const l = curLv();
+  if(l===null) return `<div class="curcard"><b>🏆 ぜんぶの級をクリア！</b></div>`;
+  const x = lvStat(l);
+  return `<button class="curcard" onclick="go('road')" style="--c:var(--lv${l})">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:17px">🚩 いまの級：<span style="color:var(--c)">${LVN[l]}</span></b><span class="sub">ロードマップへ ›</span></div>
+    <div class="gate"><i style="width:${x.acc*100}%"></i><b></b></div>
+    <div class="gl"><span>正答率 ${Math.floor(x.acc*100)}%</span><span>${Math.round(GATE*100)}%で次の級へ</span></div></button>`;
+}
+function startLevel(l){ const pool = D.filter(d=>d.lv===l); startQuiz(pool,{mode:'mix',n:Math.min(10,pool.length),prio:'weak'}); }
+function startStage(l,t){ const pool = D.filter(d=>d.lv===l && d.theme===t); startQuiz(pool,{mode:'mix',n:Math.min(10,pool.length),prio:'weak'}); }
+function toggleUnlock(){ S.unlockAll = !S.unlockAll; save(); render(); }
+function levelCard(l, cur){
+  const x = lvStat(l), done = !!(S.cleared&&S.cleared[l]), open = isOpen(l), isCur = l===cur;
+  const meta = `<div class="ttl"><b>${LVN[l]}</b><span>${LVDESC[l]}・サンプル${x.n}語</span></div>`;
+  if(done) return `<div class="rc" style="--c:var(--lv${l})">${meta}
+    <div class="gl" style="margin-top:6px"><span>クリア済み ✓</span><span>正答率 ${Math.floor(x.acc*100)}%</span></div>
+    <button class="btn btn-sub" style="min-height:44px;padding:8px" onclick="startLevel(${l})">ふくしゅうする</button></div>`;
+  if(!open) return `<div class="rc lock" style="--c:var(--lv${l})">${meta}
+    <div class="need" style="margin:6px 0 0">🔒 ${LVN[LVORD[LVORD.indexOf(l)-1]]}をクリアすると解放されます</div></div>`;
+  const themes = THEMES.map(t=>({t, ...stageStat(l,t)})).filter(o=>o.n>0);
+  const parts = [];
+  if(x.seen3<x.n) parts.push(`あと${x.n-x.seen3}語を${MINSEEN}回こたえる`);
+  if(x.acc<GATE) parts.push(`正答率をあと${Math.max(1,Math.ceil(GATE*100-x.acc*100))}%`);
+  return `<div class="rc cur" ${isCur?'id="cur"':''} style="--c:var(--lv${l})">${meta}
+    <div class="gate"><i style="width:${x.acc*100}%"></i><b></b></div>
+    <div class="gl"><span>正答率 ${Math.floor(x.acc*100)}%</span><span>クリアライン ${Math.round(GATE*100)}%</span></div>
+    <div class="gl" style="margin-top:0"><span>${MINSEEN}回以上こたえた語</span><span>${x.seen3} / ${x.n}</span></div>
+    <div class="need">${parts.length?'クリアまで：'+parts.join('、'):'クリア条件をみたしました！ 次の練習で判定されます'}</div>
+    <div class="stages">${themes.map(o=>`<button class="stg ${o.ok?'ok':''}" onclick="startStage(${l},'${o.t}')">${o.ok?'✓ ':''}${o.t} <small>${o.n}</small></button>`).join('')}</div>
+    <button class="btn btn-main" onclick="startLevel(${l})">${LVN[l]}を れんしゅう</button>${isCur?'':'<div class="need" style="margin-top:6px">（モック用の解放中）</div>'}</div>`;
+}
+function vRoadmap(){
+  syncClears();
+  const cur = curLv(), rows = [...LVORD].reverse();
+  const nodes = rows.map((l,i)=>{
+    const idx = LVORD.indexOf(l), done = !!(S.cleared&&S.cleared[l]), isCur = l===cur;
+    const below = idx>0 ? LVORD[idx-1] : null;
+    const trav = below!==null && S.cleared && S.cleared[below];
+    return `<div class="rd ${i===rows.length-1?'last':''} ${trav?'trav':''}"><div class="node ${done?'done':isCur?'cur':''}">${done?'✓':isOpen(l)?'★':'🔒'}</div>${levelCard(l,cur)}</div>`;
+  }).join('');
+  return `<h1>ロードマップ</h1>
+  <p class="sub">各級の全単語を${MINSEEN}回以上こたえて、正答率${Math.round(GATE*100)}%にすると、次の級が解放されます。下の5級からスタート。</p>
+  <div class="road"><div class="sub" style="margin:0 0 10px 54px">🏁 ゴール：英検準1級</div>${nodes}
+    <div class="sub" style="margin-left:54px">🚩 スタート：英検5級</div></div>
+  <div style="height:24px"></div>
+  <label class="sub" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${S.unlockAll?'checked':''} onchange="toggleUnlock()"> モック用：すべての級を解放して試す</label>`;
+}
+
+
+/* ============ 週間レポート ============ */
+const DOW = ['日','月','火','水','木','金','土'];
+const ymd = (d=new Date()) => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const daysAgo = n => { const d=new Date(); d.setDate(d.getDate()-n); return d; };
+function weekAgg(a,b){
+  const set = new Set(); for(let i=a;i<=b;i++) set.add(ymd(daysAgo(i)));
+  let n=0,c=0,sec=0; const days=new Set(), bm={};
+  for(const x of (S.sessions||[])){
+    if(!set.has(x.d)) continue;
+    n+=x.n; c+=x.c; sec+=x.sec; days.add(x.d);
+    for(const m in (x.bm||{})){ (bm[m]=bm[m]||[0,0]); bm[m][0]+=x.bm[m][0]; bm[m][1]+=x.bm[m][1]; }
+  }
+  return { n, c, sec, days:days.size, acc:n?c/n:null, bm };
+}
+function dayBars(){
+  return [6,5,4,3,2,1,0].map(i=>{ const dt=daysAgo(i), k=ymd(dt); let n=0; (S.sessions||[]).forEach(x=>{ if(x.d===k) n+=x.n; });
+    return { dow:DOW[dt.getDay()], md:(dt.getMonth()+1)+'/'+dt.getDate(), n }; });
+}
+function streak(){
+  const have = new Set((S.sessions||[]).map(x=>x.d)); let i = have.has(ymd())?0:1, n=0;
+  while(have.has(ymd(daysAgo(i)))){ n++; i++; }
+  return n;
+}
+function logSession(){
+  if(!Q || Q.logged) return;
+  const n = Q.correct + Q.wrong.length; if(!n) return;
+  Q.logged = true; S.sessions = S.sessions||[];
+  S.sessions.push({ d:ymd(), n, c:Q.correct, sec:Math.min(1800, Math.round((Date.now()-Q.t0)/1000)), bm:Q.bm||{} });
+  S.sessions = S.sessions.slice(-120); save();
+}
+function reportCard(){
+  const tw = weekAgg(0,6);
+  return `<button class="curcard" style="border:1px solid var(--line)" onclick="openReport()">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:16px">📬 週間レポート</b>
+    <span class="sub">${S.report&&((S.report.ch.mail&&S.report.email)||(S.report.ch.line&&S.report.lineLinked))?'送信先 設定ずみ':'送信先 未設定'} ›</span></div>
+    <div class="sub" style="margin-top:2px">直近7日：${tw.days}日学習・${tw.n}問・${Math.round(tw.sec/60)}分</div></button>`;
+}
+const okMail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+function openReport(){ document.getElementById('rep').classList.add('open'); renderReport(); document.getElementById('rep').scrollTop=0; }
+function closeReport(){ document.getElementById('rep').classList.remove('open'); render(); }
+function setRdow(v){ S.report.dow=+v; save(); renderReport(); }
+function setRhour(v){ S.report.hour=+v; save(); }
+function setRon(c){ S.report.on=c; save(); renderReport(); }
+function setRmsg(t,ok){ const e=document.getElementById('rmsg'); if(e){ e.textContent=t; e.style.color = ok?'var(--good)':'var(--bad)'; } }
+function repDef(){ return { email:'', on:true, dow:0, hour:19, ch:{mail:true,line:false}, lineLinked:false, lineCode:'', log:[] }; }
+function readMail(){ const m=document.getElementById('rmail'); return m ? m.value.trim() : S.report.email; }
+function togCh(k){
+  const R=S.report; R.ch[k]=!R.ch[k];
+  if(k==='line' && R.ch.line && !R.lineCode) R.lineCode = String(100000+Math.floor(Math.random()*900000));
+  save(); renderReport();
+}
+function toggleLine(){ S.report.lineLinked=!S.report.lineLinked; save(); renderReport(); }
+function destText(R){ const a=[]; if(R.ch.mail) a.push(R.email?esc(R.email):'メール（未入力）'); if(R.ch.line) a.push('LINE'+(R.lineLinked?'':'（未連携）')); return a.join('・'); }
+function saveReport(){
+  const R=S.report, v=readMail();
+  if(!R.ch.mail && !R.ch.line){ setRmsg('おくり先を1つ以上えらんでください',false); return; }
+  if(R.ch.mail && !okMail(v)){ setRmsg('メールアドレスの形式を確認してください',false); return; }
+  if(R.ch.mail) R.email=v;
+  save(); renderReport(); setRmsg('保存しました。（モックなので、実際には送られません）',true);
+}
+function sendNow(){
+  const R=S.report, v=readMail(), to=[];
+  if(R.ch.mail){ if(!okMail(v)){ setRmsg('メールアドレスの形式を確認してください',false); return; } to.push('メール'); }
+  if(R.ch.line){ if(!R.lineLinked){ setRmsg('LINEがまだ連携されていません',false); return; } to.push('LINE'); }
+  if(!to.length){ setRmsg('おくり先を1つ以上えらんでください',false); return; }
+  if(R.ch.mail) R.email=v;
+  R.log = [{t:Date.now(), kind:'手動', to:to.join('・')}, ...(R.log||[])].slice(0,5);
+  save(); renderReport();
+  setRmsg('送信しました（モック）。本番では '+to.join('・')+' に、下のプレビューの内容が届きます。',true);
+}
+function diffTag(v,unit){
+  if(v===null) return '<em class="flat">先週データなし</em>';
+  if(v>0) return `<em class="up">▲ 先週より +${v}${unit}</em>`;
+  if(v<0) return `<em class="down">▼ 先週より ${v}${unit}</em>`;
+  return '<em class="flat">－ 先週と同じ</em>';
+}
+function repData(){
+  const tw = weekAgg(0,6), lw = weekAgg(7,13), a = daysAgo(6), b = new Date();
+  const worst = D.map(d=>({d,x:itemAgg(d.id)})).filter(o=>o.x.s>=3).sort((p,q)=>p.x.c/p.x.s-q.x.c/q.x.s).slice(0,3);
+  return { tw, lw, bars:dayBars(), worst, weak:weakestCell('all'), cur:curLv(),
+    period:`${a.getMonth()+1}/${a.getDate()}〜${b.getMonth()+1}/${b.getDate()}` };
+}
+function repPrompt(R){
+  const f = w => ({ days:w.days, questions:w.n, minutes:Math.round(w.sec/60), accuracy:w.acc===null?null:pct(w.acc),
+    byMode:Object.fromEntries(Object.keys(MODES).filter(m=>w.bm[m]&&w.bm[m][0]).map(m=>[MODES[m],pct(w.bm[m][1]/w.bm[m][0])])) });
+  const data = { period:R.period, thisWeek:f(R.tw), lastWeek:f(R.lw), dailyQuestions:R.bars.map(b=>({day:b.dow,n:b.n})),
+    currentLevel: R.cur===null?'全級クリア':LVN[R.cur]+(' 正答率'+Math.floor(lvStat(R.cur).acc*100)+'%（クリアは90%）'),
+    weakestArea: R.weak?`${R.weak.t} × ${MODES[R.weak.m]}（${pct(R.weak.a)}%）`:null,
+    weakWords: R.worst.map(o=>o.d.en+'（'+o.d.ja+'）') };
+  return `あなたは小学生向け英検対策アプリの学習コーチです。保護者に毎週送る学習レポートに載せるコメントを書いてください。
+
+【ルール】
+- 日本語。やさしく、前向きに。責めない。数字は下のデータにあるものだけを使う
+- comment：今週の頑張りを具体的な数字で認めつつ、気づき（先週との違い、苦手の傾向）を2〜3文
+- goal：来週の目標を1つ。数字つきで現実的に（例：「4日学習・合計60問」）
+- kid：本人向けのひとこと（ひらがな多め、40字以内）
+
+【出力】JSONのみ：{"comment":"…","goal":"…","kid":"…"}
+
+【データ】
+${JSON.stringify(data)}`;
+}
+async function runRepAI(){
+  if(!SAMPLE || (UI.rai && UI.rai.status==='loading')) return;
+  UI.rai = {status:'loading'}; renderReport();
+  try{ UI.rai = {status:'done', data: await SAMPLE.json(repPrompt(repData()), {cache:false})}; }
+  catch(e){ UI.rai = {status:'error', code:(e&&e.code)||'upstream_error'}; }
+  renderReport();
+}
+function renderReport(){
+  const el = document.getElementById('rep'), R = S.report, d = repData(), tw = d.tw, lw = d.lw;
+  const prev = document.getElementById('rmail'), draft = prev ? prev.value : R.email;
+  const st = el.scrollTop;
+  const accD = (tw.acc!==null && lw.acc!==null) ? Math.round((tw.acc-lw.acc)*100) : null;
+  const nD = lw.n ? tw.n-lw.n : null, dayD = lw.days ? tw.days-lw.days : null;
+  const minT = Math.round(tw.sec/60), minL = Math.round(lw.sec/60), minD = lw.sec ? minT-minL : null;
+  const mx = Math.max(1, ...d.bars.map(b=>b.n));
+  const bars = d.bars.map(b=>`<div><span>${b.n||''}</span><i class="${b.n?'':'z'}" style="height:${b.n? Math.max(6,b.n/mx*80):4}px"></i><span>${b.dow}</span></div>`).join('');
+  const modeBars = Object.keys(MODES).map(m=>{ const x=tw.bm[m]; const a = x&&x[0]? x[1]/x[0] : null;
+    return `<div class="pbar"><div class="n">${MODES[m]}</div><div class="bar"><i style="width:${a===null?0:a*100}%;background:hsl(${a===null?0:4+a*126} 70% 50%)"></i></div><div class="v">${a===null?'–':pct(a)+'%'}</div></div>`; }).join('');
+  const lvLine = d.cur===null ? '🏆 ぜんぶの級をクリアしました！' : (()=>{ const x=lvStat(d.cur); return `🚩 いまの級：<b>${LVN[d.cur]}</b>（正答率 ${Math.floor(x.acc*100)}% ／ クリアは90%）`; })();
+  const a = UI.rai; let ai;
+  if(!SAMPLE) ai = `<p class="sub">AIコメントはClaudeの中で開いたときに使えます。（本番ではサーバー側で作成してメールに載せます）</p>`;
+  else if(a && a.status==='loading') ai = `<p class="sub">コメントを作っています…（10〜60秒）</p>`;
+  else if(a && a.status==='done'){ const r=a.data||{}; ai = `<p style="margin:0">${esc(r.comment||'')}</p><p style="margin:8px 0 0"><b>来週の目標：</b>${esc(r.goal||'')}</p>
+    ${r.kid?`<div class="kidmsg">💬 ${esc(r.kid)}</div>`:''}<div style="height:10px"></div><button class="btn btn-sub" style="min-height:44px;padding:8px" onclick="runRepAI()">作りなおす</button>`; }
+  else ai = `${a?'<p class="sub">うまく作れませんでした。もう一度ためしてください。</p>':''}<button class="btn btn-sub" style="min-height:48px;padding:8px" onclick="runRepAI()">🤖 AIコメントを作る</button>`;
+  el.innerHTML = `<div class="qtop"><button class="qx" aria-label="もどる" onclick="closeReport()">‹</button><b style="font-size:17px">週間レポート</b></div>
+  <div class="qbody">
+    <div class="repbox" style="margin-top:6px"><h3>📬 毎週メールでお届け</h3>
+      <p class="sub">保護者のメールアドレスに、1週間の学習のようすを自動で送ります。</p>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:700"><input type="checkbox" ${R.on?'checked':''} onchange="setRon(this.checked)" style="width:20px;height:20px"> 毎週おくる</label>
+      <label class="lbl">おくり先（両方もOK）</label>
+      <div class="chips"><button class="chip ${R.ch.mail?'on':''}" onclick="togCh('mail')">✉️ メール</button><button class="chip ${R.ch.line?'on':''}" onclick="togCh('line')">💬 LINE</button></div>
+      ${R.ch.mail?`<label class="lbl" for="rmail">メールアドレス</label>
+      <input id="rmail" class="fld" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="parent@example.com" value="${esc(draft||'')}">`:''}
+      ${R.ch.line?`<label class="lbl">LINEの連携</label>
+      <div class="subj" style="line-height:1.8"><b>連携の手順（本番）</b><br>① 公式アカウントを友だち追加<br>② 下の連携コードをトークで送信<br>③ 「連携しました」と返信が届けば完了</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:10px"><span style="font-size:28px;font-weight:800;letter-spacing:.18em;font-variant-numeric:tabular-nums">${R.lineCode}</span><span class="sub">連携コード（本番では短時間で失効）</span></div>
+      <div style="height:8px"></div><button class="btn ${R.lineLinked?'btn-sub':'btn-main'}" style="min-height:46px;padding:8px" onclick="toggleLine()">${R.lineLinked?'✓ 連携ずみ（タップで解除）':'連携したことにする（モック）'}</button>`:''}
+      <label class="lbl">おくる曜日</label>${seg(DOW.map((x,i)=>[i,x]), R.dow, 'setRdow')}
+      <label class="lbl" for="rhour">おくる時間</label>
+      <select id="rhour" class="fld" onchange="setRhour(this.value)">${Array.from({length:17},(_,i)=>i+6).map(h=>`<option value="${h}" ${R.hour===h?'selected':''}>${h}:00</option>`).join('')}</select>
+      <div style="height:14px"></div>
+      <div class="row2"><button class="btn btn-main" onclick="saveReport()">保存</button><button class="btn btn-sub" onclick="sendNow()">📨 今すぐ送信</button></div>
+      <div class="need" id="rmsg" style="margin-top:10px">${(R.ch.mail&&R.email)||(R.ch.line&&R.lineLinked)?`毎週 ${DOW[R.dow]}曜 ${R.hour}:00 に ${destText(R)} へ${R.on?'送ります':'（いまは停止中）'}`:'おくり先を設定して保存してください'}</div>
+      ${(R.log&&R.log.length)?`<div class="lbl" style="margin-top:12px">最近の送信（モック）</div>${R.log.map(x=>{const t=new Date(x.t);return `<div class="sub">${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}　${x.kind}　${esc(x.to)}</div>`;}).join('')}`:''}
+    </div>
+    <h2 id="rprev">メールのイメージ</h2>
+    <div class="subj">件名：【えいたんレーダー】今週の学習レポート（${d.period}）</div>
+    <div class="repbox" style="margin-top:10px">
+      <h3>${d.period} の学習</h3><p class="sub">直近7日間のまとめです。</p>
+      <div class="kpis">
+        <div class="kpi"><b>${tw.days}<small style="font-size:14px"> / 7日</small></b><span>学習した日</span>${diffTag(dayD,'日')}</div>
+        <div class="kpi"><b>${tw.n}<small style="font-size:14px"> 問</small></b><span>とりくんだ問題</span>${diffTag(nD,'問')}</div>
+        <div class="kpi"><b>${minT}<small style="font-size:14px"> 分</small></b><span>学習時間</span>${diffTag(minD,'分')}</div>
+        <div class="kpi"><b>${tw.acc===null?'–':pct(tw.acc)+'<small style="font-size:14px">%</small>'}</b><span>正答率</span>${diffTag(accD,'pt')}</div>
+      </div>
+      <div class="lbl">毎日の問題数</div><div class="days">${bars}</div>
+      <div class="lbl">問題の形べつ 正答率（今週）</div>${modeBars}
+      <div class="lbl">ロードマップ</div><div style="font-size:14px">${lvLine}</div>
+      <div class="lbl">いま気になるところ（累計）</div>
+      <div style="font-size:14px">${d.weak?`いちばん苦手：<b>${d.weak.t} × ${MODES[d.weak.m]}</b>（${pct(d.weak.a)}%）`:'まだデータが足りません'}</div>
+      ${d.worst.length?`<div class="sub" style="margin-top:4px">まちがいが多い語：${d.worst.map(o=>esc(o.d.en)+'（'+esc(o.d.ja)+'）').join('、')}</div>`:''}
+      <div class="lbl">コーチからのコメント</div>${ai}
+    </div>
+  </div>`;
+  el.scrollTop = st;
+}
+
+/* ============ AI分析（Claude） ============ */
+let SAMPLE = null;
+UI.ai = null;
+(async()=>{ try{ if(window.claude && window.claude.use){ SAMPLE = await window.claude.use('sample'); if(UI.tab==='weak') render(); } }catch(e){} })();
+
+function buildSummary(lv){
+  const cells=[];
+  for(const t of THEMES) for(const m in MODES){ const x=cellAgg(t,m,lv); if(x.s) cells.push({theme:t,mode:m,attempts:x.s,accuracy:pct(x.c/x.s)}); }
+  const modes={}; for(const m in MODES){ const x=cellAgg(null,m,lv); modes[m]= x.s?{attempts:x.s,accuracy:pct(x.c/x.s)}:null; }
+  const types={}; for(const k in TYPES){ let s=0,c=0; for(const d of filt(lv)) if(d.type===k) for(const m in MODES){const x=st(d.id,m);s+=x.s;c+=x.c;} types[k]= s?{attempts:s,accuracy:pct(c/s)}:null; }
+  const levels={}; for(const l of LVORD){ if(lv!=='all'&&lv!=l) continue; const it=D.filter(d=>d.lv===l); let s=0,c=0; it.forEach(d=>{const x=itemAgg(d.id);s+=x.s;c+=x.c;});
+    levels[LVN[l]]={status:S.cleared[l]?'クリア済み':isOpen(l)?'挑戦中':'未解放',words:it.length,mastered:it.filter(mastered).length,untouched:it.filter(d=>!itemAgg(d.id).s).length,accuracy:s?pct(c/s):null}; }
+  const worst = filt(lv).map(d=>({d,x:itemAgg(d.id)})).filter(o=>o.x.s>=3).sort((a,b)=>a.x.c/a.x.s-b.x.c/b.x.s).slice(0,8)
+    .map(({d})=>({en:d.en,ja:d.ja,level:LVN[d.lv],type:TYPES[d.type],theme:d.theme,byMode:Object.fromEntries(Object.keys(MODES).filter(m=>st(d.id,m).s).map(m=>[m,st(d.id,m).c+'/'+st(d.id,m).s]))}));
+  return {scope: lv==='all'?'全級':LVN[lv], cells, modes, types, levels, worstWords:worst};
+}
+function aiPrompt(lv){
+  return `あなたは小学生向け英検対策（5級〜準1級）の学習コーチです。このアプリは、各級を「全語を3回以上こたえ、正答率90%以上」でクリアしないと次の級に進めない仕組みです。以下は、ある小学生の英単語アプリの回答データです。保護者がスマホで読む前提で、弱点を分析してください。
+
+【データの見方】
+- theme＝単語のテーマ、mode＝問題の形（en2ja=英語→日本語の意味、ja2en=日本語→英語を選ぶ、spell=つづりを書く）
+- accuracy＝正答率(%)、attempts＝挑戦回数。attemptsが5未満のマスは断定せず「まだ判断できない」扱いにする
+- byMode は "正解数/挑戦数"
+- 数字は必ずこのデータにあるものだけを使う。推測で作らない
+
+【ルール】
+- 日本語。やさしく具体的に。責める表現は使わない
+- 弱点は最大3つ。「どのテーマ×どの問題の形か」「何が起きていそうか（例：意味は分かるが書けない）」「家庭でできる具体策」をセットで
+- 練習プランは最大3つ。theme は ${THEMES.join('/')} のいずれか、mode は en2ja/ja2en/spell のいずれか
+- childMessage は小学生本人向けのひとこと（ひらがな多め、40字以内、前向きに）
+
+【出力】JSONのみ。形式：
+{"headline":"全体を一言で（30字以内）","summary":"保護者向け2〜3文","weaknesses":[{"theme":"うごき","mode":"spell","finding":"…","tip":"…"}],"strengths":["…"],"plan":[{"theme":"うごき","mode":"spell","reason":"…"}],"childMessage":"…"}
+
+【データ】
+${JSON.stringify(buildSummary(lv))}`;
+}
+async function runAI(){
+  if(!SAMPLE || (UI.ai && UI.ai.status==='loading')) return;
+  const ctl = new AbortController(), lv = UI.lv;
+  UI.ai = {status:'loading', ctl, lv}; render();
+  try{
+    const data = await SAMPLE.json(aiPrompt(lv), {signal:ctl.signal, cache:false});
+    UI.ai = {status:'done', data, at:S.today, lv};
+  }catch(e){
+    UI.ai = (e && e.code==='cancelled') ? null : {status:'error', code:(e&&e.code)||'upstream_error'};
+  }
+  render();
+}
+function stopAI(){ if(UI.ai && UI.ai.ctl) UI.ai.ctl.abort(); }
+function aiPlan(i){
+  const p = UI.ai.data.plan[i], w = weakestCell(UI.ai.lv);
+  const t = THEMES.includes(p.theme) ? p.theme : (w&&w.t), m = MODES[p.mode] ? p.mode : (w&&w.m);
+  if(t && m) practiceCell(t,m,UI.ai.lv);
+}
+function aiCard(){
+  const a = UI.ai, scope = UI.lv==='all'?'全級':LVN[UI.lv];
+  const head = `<h3>🤖 AIコーチの分析</h3>`;
+  const foot = `<div class="note">回答データをもとにClaudeが分析しています。挑戦回数が少ないマスは参考程度に。</div>`;
+  if(!SAMPLE) return `<div class="ai">${head}<p class="sub">この機能はClaudeの中で開いたときに使えます。（本番アプリでは Edge Function 経由で Claude API を呼びます）</p></div>`;
+  if(!a || a.lv!==UI.lv && a.status!=='loading') {
+    if(a && a.status==='error') {} else return `<div class="ai">${head}<p class="sub">いまの正答率データ（${scope}）を読んで、苦手の原因と、おすすめの練習を提案します。</p>
+      <div style="height:10px"></div><button class="btn btn-main" onclick="runAI()">${scope}をAIで分析する</button>${foot}</div>`;
+  }
+  if(a.status==='loading') return `<div class="ai">${head}<p class="sub">分析しています…（10〜60秒ほどかかります）</p>
+    <div style="height:10px"></div><button class="btn btn-sub" onclick="stopAI()">やめる</button></div>`;
+  if(a.status==='error'){
+    const msg = ({rate_limited:'いまは回数制限にかかっています。しばらくしてからもう一度ためしてください。',invalid_json:'うまくまとめられませんでした。もう一度ためしてください。',not_granted:'AI分析の利用が許可されていません。',sampling_disabled:'このアカウントではAI分析を使えません。'})[a.code] || '分析に失敗しました。もう一度ためしてください。';
+    return `<div class="ai">${head}<p class="sub">${msg}</p><div style="height:10px"></div><button class="btn btn-main" onclick="runAI()">もう一度</button></div>`;
+  }
+  const r = a.data || {};
+  const wk = (r.weaknesses||[]).slice(0,3).map(w=>`<div class="wk"><span class="tg">${esc([w.theme, MODES[w.mode]].filter(Boolean).join(' × '))}</span>
+    <div>${esc(w.finding||'')}</div><div class="tp">💡 ${esc(w.tip||'')}</div></div>`).join('');
+  const sg = (r.strengths||[]).slice(0,3).map(x=>`<li>${esc(x)}</li>`).join('');
+  const pl = (r.plan||[]).slice(0,3).map((p,i)=>`<button class="plan" onclick="aiPlan(${i})">${esc([p.theme,MODES[p.mode]].filter(Boolean).join(' × '))} を10問<small>${esc(p.reason||'')}</small></button>`).join('');
+  return `<div class="ai">${head}<div class="hl">${esc(r.headline||'')}</div><p style="margin:0;font-size:14px">${esc(r.summary||'')}</p>
+    ${wk?`<div class="blk"><b>気になるところ</b>${wk}</div>`:''}
+    ${sg?`<div class="blk"><b>とくいなところ</b><ul>${sg}</ul></div>`:''}
+    ${pl?`<div class="blk"><b>おすすめの練習（タップで開始）</b>${pl}</div>`:''}
+    ${r.childMessage?`<div class="blk"><div class="kid">💬 ${esc(r.childMessage)}</div></div>`:''}
+    ${a.at!==S.today?`<div class="stale">分析のあとに練習しました。最新の結果で分析しなおせます。</div>`:''}
+    <div style="height:12px"></div><button class="btn btn-sub" onclick="runAI()">もう一度分析する</button>${foot}</div>`;
+}
+
+/* ============ 起動 ============ */
+load(); syncClears(); C.lv=[curLv()||5]; render();
+</script>
+</body>
+</html>

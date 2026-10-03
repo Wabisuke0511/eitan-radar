@@ -1,0 +1,102 @@
+level,en,ja,type,theme
+5,apple,りんご,word,たべもの
+5,milk,牛乳,word,たべもの
+5,bread,パン,word,たべもの
+4,vegetable,野菜,word,たべもの
+4,delicious,おいしい,word,たべもの
+4,have breakfast,朝食をとる,phrase,たべもの
+3,dessert,デザート,word,たべもの
+3,a piece of cake,朝飯前,idiom,たべもの
+5,dog,犬,word,どうぶつ
+5,cat,ねこ,word,どうぶつ
+5,bird,鳥,word,どうぶつ
+5,rabbit,うさぎ,word,どうぶつ
+5,elephant,ぞう,word,どうぶつ
+3,insect,昆虫,word,どうぶつ
+4,walk the dog,犬を散歩させる,phrase,どうぶつ
+3,raining cats and dogs,どしゃ降り,idiom,どうぶつ
+5,school,学校,word,がっこう
+5,teacher,先生,word,がっこう
+5,desk,机,word,がっこう
+5,notebook,ノート,word,がっこう
+4,homework,宿題,word,がっこう
+4,subject,教科,word,がっこう
+5,go to school,学校へ行く,phrase,がっこう
+4,be good at,〜が得意だ,phrase,がっこう
+4,take a test,テストを受ける,phrase,がっこう
+3,graduate,卒業する,word,がっこう
+4,library,図書館,word,ばしょ
+4,station,駅,word,ばしょ
+4,museum,博物館,word,ばしょ
+4,restaurant,レストラン,word,ばしょ
+4,hospital,病院,word,ばしょ
+5,next to,〜のとなりに,phrase,ばしょ
+4,far from,〜から遠い,phrase,ばしょ
+3,environment,環境,word,ばしょ
+3,on the way to,〜へ行く途中で,phrase,ばしょ
+5,red,赤い,word,いろ・ようす
+5,blue,青い,word,いろ・ようす
+5,big,大きい,word,いろ・ようす
+5,small,小さい,word,いろ・ようす
+4,beautiful,美しい,word,いろ・ようす
+4,difficult,むずかしい,word,いろ・ようす
+4,dangerous,危険な,word,いろ・ようす
+3,important,重要な,word,いろ・ようす
+3,useful,役に立つ,word,いろ・ようす
+5,run,走る,word,うごき
+5,swim,泳ぐ,word,うごき
+5,eat,食べる,word,うごき
+4,visit,訪ねる,word,うごき
+4,remember,覚えている,word,うごき
+4,borrow,借りる,word,うごき
+3,decide,決める,word,うごき
+5,get up,起きる,phrase,うごき
+5,look at,〜を見る,phrase,うごき
+4,look for,〜を探す,phrase,うごき
+3,take care of,〜の世話をする,phrase,うごき
+3,look forward to,〜を楽しみにする,phrase,うごき
+3,make friends with,〜と友だちになる,phrase,うごき
+5,happy,うれしい,word,きもち
+5,sad,悲しい,word,きもち
+5,tired,つかれた,word,きもち
+5,hungry,おなかがすいた,word,きもち
+4,excited,わくわくした,word,きもち
+3,be interested in,〜に興味がある,phrase,きもち
+3,be afraid of,〜をこわがる,phrase,きもち
+5,See you later,またね,idiom,かいわ
+5,Nice to meet you,はじめまして,idiom,かいわ
+5,How about you?,あなたはどう？,idiom,かいわ
+5,Thank you very much,どうもありがとう,idiom,かいわ
+4,Here you are,はい、どうぞ,idiom,かいわ
+4,Just a moment,ちょっと待って,idiom,かいわ
+4,Good luck,がんばって,idiom,かいわ
+3,Take it easy,気楽にね,idiom,かいわ
+3,once in a while,ときどき,idiom,かいわ
+3,break a leg,がんばって（幸運を）,idiom,かいわ
+p2,vegetarian,菜食主義者,word,たべもの
+p2,journey,旅,word,ばしょ
+p2,abroad,海外へ,word,ばしょ
+p2,appreciate,感謝する,word,きもち
+p2,recommend,すすめる,word,うごき
+p2,be famous for,〜で有名だ,phrase,いろ・ようす
+p2,take part in,〜に参加する,phrase,うごき
+p2,by mistake,まちがって,phrase,かいわ
+p2,It depends.,場合による,idiom,かいわ
+2,agriculture,農業,word,たべもの
+2,sustainable,持続可能な,word,いろ・ようす
+2,achieve,達成する,word,うごき
+2,reduce,減らす,word,うごき
+2,curious,好奇心の強い,word,きもち
+2,be responsible for,〜に責任がある,phrase,がっこう
+2,come up with,〜を思いつく,phrase,うごき
+2,as a result of,〜の結果として,phrase,かいわ
+2,in the long run,長い目で見れば,idiom,かいわ
+p1,conservation,保護,word,どうぶつ
+p1,curriculum,教育課程,word,がっこう
+p1,inevitable,避けられない,word,いろ・ようす
+p1,hesitate,ためらう,word,きもち
+p1,reluctant,気が進まない,word,きもち
+p1,sustain,維持する,word,うごき
+p1,bring about,〜をもたらす,phrase,うごき
+p1,take for granted,〜を当然と思う,idiom,かいわ
+p1,at the expense of,〜を犠牲にして,idiom,かいわ
