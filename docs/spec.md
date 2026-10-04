@@ -57,7 +57,7 @@
 - 1日20回まで（Edge Function 側）。`rate_limited` は「しばらくしてから」と表示
 
 ## 6. 週間レポート（Phase 2 メール / Phase 3 LINE）
-- 設定：送り先（メール／LINE、両方可）・曜日・時刻（JST, 6〜22時）・オン/オフ。メールは初期値をログインメールにしてよい
+- 設定：送り先（メール／LINE、両方可）・曜日・時刻（JST, 6〜22時）・オン/オフ。メールの初期値は空（ログインは偽メールのため。保護者の実メールを入力してもらう）
 - **自動送信**：pg_cron が毎時 `send-weekly-report`（mode=cron）を呼ぶ → 設定の曜日・時刻に一致する人へ。6日以内に自動送信済みならスキップ
 - **今すぐ送信**：`invoke('send-weekly-report', { body:{ child_id } })`。1日3回まで。結果は `report_logs` に残り、画面の「最近の送信」に出す
 - 内容：直近7日の 学習日数/問題数/学習時間/正答率（先週比）、毎日の問題数、形別正答率、いまの級、いま気になるところ、AIコメント（失敗しても送る）
@@ -92,9 +92,11 @@
 **起動時のデータ読み込み**（ログイン後）：`children`（最初の1人。なければ名前入力→insert）→ `vocab_items`・`item_stats`・`level_progress`・`report_settings`（なければ初期行を insert）→ 直近60日の `study_sessions`（連続日数・今日の問題数）。クイズ終了後は `item_stats` と `level_progress` を再取得して画面を更新。
 
 ## 9. 認証
-- Supabase Auth の**メールOTP**（6桁コードをアプリ内で入力）。iOS のホーム画面アプリではマジックリンクだと Safari 側で開いてセッションが分かれるため使わない
-- `signInWithOtp({ email })` → `verifyOtp({ email, token, type:'email' })`。セッションは永続化（`persistSession:true`）
-- Supabase 側のメールテンプレートに `{{ .Token }}` を入れる（`docs/setup.md`）
+- Supabase Auth の**メール/パスワード認証**を「ログインID＋PIN（6桁以上）」として使う。メールは送らない（メールOTPは、カスタム SMTP なしでテンプレートを編集できないため見送り。iOS のホーム画面アプリではマジックリンクだと Safari 側で開いてセッションが分かれるため、それも使わない）
+- ログインID は半角英小文字・数字（3〜20字）。内部で `<id>@eitan-radar.invalid` を作って `email` に使う。新規は `signUp({ email, password })`、2回目以降は `signInWithPassword({ email, password })`。セッションは永続化（`persistSession:true`）。Supabase が偽メールの形式を受け付けるか、Phase 1 の最初に確認する
+- Supabase 側：「Confirm email」オフ、匿名サインインはオフ（`docs/setup.md`）
+- ID は同じプロジェクト内で一意。PIN を忘れても再設定はできない（新しい ID で作り直す）
+- 週間レポートの宛先は、ログインメールではなく `report_settings.email` に保護者の実メールを入れる
 
 ## 10. 非機能・セキュリティ
 - 子どもの学習データと保護者のメールアドレスを保存する。RLS で保護者本人の行だけ読み書き可。`anon` ロールには何も許可しない

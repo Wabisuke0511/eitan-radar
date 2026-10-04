@@ -27,11 +27,12 @@ npx supabase init; npx supabase login; npx supabase link --project-ref <PROJECT_
 4. 語彙サンプルを入れる：Dashboard > SQL Editor に `supabase/seed/vocab_seed.sql` の中身を貼って実行。
 5. 確認：Table Editor で `vocab_items` が101行、`children` など全テーブルに RLS が「Enabled」になっていること。
 
-### 0-3. 認証（メールOTP）
-1. Authentication > Providers で **Email** を有効にする。
-2. Authentication > Email Templates の **「Confirm signup」と「Magic Link」の両方**に、6桁コードを表示する文言を入れる（例：`ログインコード：{{ .Token }}`）。リンクの文言は消してよい。
-3. Authentication > URL Configuration の **Site URL** に、GitHub Pages の URL を入れる。
-4. Supabase 標準のメール送信は回数制限が厳しい。ログインコードが届かない・止まる場合は、Authentication の SMTP 設定で Resend の SMTP（Phase 2 で作るアカウント）を設定する。
+### 0-3. 認証（ログインID＋PIN）
+メールは送らない方式。現在の Supabase はカスタム SMTP なしだとメールテンプレートを編集できず、6桁コードのメールが作れないため（決定事項ログ 2026-10-04）。
+1. Authentication > Sign In / Providers で **Email** が Enabled であること、「Allow new users to sign up」がオンであること、「Allow anonymous sign-ins」がオフであることを確認する。
+2. 同じ画面で **Confirm email をオフ**にして Save changes（偽メールには確認メールが届かないため）。
+3. Authentication > URL Configuration の **Site URL** に、GitHub Pages の URL（`https://<ユーザー名>.github.io/eitan-radar/`）を入れる。
+4. メールテンプレートと SMTP の設定は不要。Resend の SMTP は、将来メールを使う認証に戻す場合のみ。
 
 ## Phase 2（AI分析 + 週間レポート）の準備
 1. **Anthropic API キー**：https://console.anthropic.com で作成（`sk-ant-...`）。利用上限（月額）を低めに設定しておく。

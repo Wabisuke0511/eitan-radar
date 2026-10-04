@@ -12,7 +12,7 @@ mock/index.html を元にルートへ index.html を作り、コア機能を Sup
 【やること】
 1. index.html を mock/index.html のコピーから作る。デザイン・文言・挙動は変えない。
 2. Supabase JS v2 を CDN で読み込む。SUPABASE_URL と SUPABASE_ANON_KEY は <script> 先頭の定数にする。値が未設定なら、私に聞くこと（推測しない・service_role は絶対に使わない）。
-3. 認証：メールOTP（signInWithOtp → verifyOtp, type:'email'）。ログイン画面を追加し、初回のみ子どもの名前入力 → children に insert。セッションは永続化。ログアウトはホーム下部の小さなリンクで。
+3. 認証：ログインID＋PIN（signUp / signInWithPassword。ID から `<id>@eitan-radar.invalid` を作る。docs/spec.md §9）。最初に、この形式のメールを Supabase が受け付けるか確認する。ログイン画面を追加し、初回のみ子どもの名前入力 → children に insert。セッションは永続化。ログアウトはホーム下部の小さなリンクで。
 4. docs/spec.md「8. モック → 本番の置き換え表」に従って置換する。
    - localStorage / seed() / デモデータ / 「デモデータに戻す」/ unlockAll（チェックボックス含む）を削除
    - 語彙は vocab_items、累計は item_stats、クリアは level_progress、連続日数・今日の問題数は study_sessions（すべて JST 集計）

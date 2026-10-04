@@ -57,6 +57,7 @@ docs/                 ← 仕様・データ設計・セットアップ・各フ
 - 2026-10-03: クリア条件＝全語3回以上＋正答率90%（`GATE=0.9`, `MINSEEN=3`）。変える場合は SQL の `sync_level_progress` と JS の両方を直す。
 - 2026-10-03: 問題の形は 英→和 / 和→英 / スペル の3つ（聞き取りは廃止）。
 - 2026-10-04: Supabase は既存プロジェクト bpulse-check（otorkvmcnhwspjwypurb, Tokyo）を共用する。bpulse-check は `bp_records` / `bp_profile` を anon で使うため、init マイグレーション（未適用だったので直接修正）の anon revoke を本アプリの10テーブルに限定した。今後も `public` 全体を対象にする revoke / grant / drop は書かない。Secrets も共用なので、Phase 2 で登録する前に既存の名前（例：`ANTHROPIC_API_KEY`）を確認する。
+- 2026-10-04: 認証をメールOTPから「ログインID＋PIN」に変更（Supabase のメール/パスワード認証。ID から偽メール `<id>@eitan-radar.invalid` を作る）。理由：現在の Supabase はカスタム SMTP なしだとメールテンプレートを編集できず、6桁コードを送れないため。Auth の「Confirm email」はオフ、匿名サインインはオフ。2026-10-03 の「メールOTP」の記述はこれで置き換え。週間レポートの宛先メールは `report_settings.email` に保護者の実メールを別途入れる（Phase 2）。
 
 ## 未決事項（コードを書く前に確認）
 - 語彙ライブラリの出どころ（市販単語帳の転載は不可。自作・生成して人間が確認）
