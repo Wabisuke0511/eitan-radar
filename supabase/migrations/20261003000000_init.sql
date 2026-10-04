@@ -329,4 +329,9 @@ grant insert (child_id, enabled, email, email_enabled, line_enabled, dow, hour) 
 grant update (enabled, email, email_enabled, line_enabled, dow, hour, updated_at) on public.report_settings to authenticated;
 
 -- anon（未ログイン）には何も許可しない
-revoke all on all tables in schema public from anon;
+-- ※ Supabase プロジェクトを bpulse-check（bp_records / bp_profile）と共用するため、対象を本アプリのテーブルに限定する
+revoke all on table
+  public.children, public.vocab_items, public.study_sessions, public.answer_logs,
+  public.item_stats, public.level_progress, public.report_settings, public.report_logs,
+  public.line_link_codes, public.ai_usage
+from anon;
