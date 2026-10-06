@@ -240,6 +240,8 @@
 const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:false, line:false };
+// ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
+const APP_VERSION = 'v3', APP_DATE = '2026-10-06';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -342,7 +344,7 @@ function vHome(){
   }).join('');
   const recent = S.recent.slice(0,3).map(id=>byId(id)).filter(Boolean).map(d=>wordRow(d)).join('');
   return `
-  <h1>えいたんレーダー</h1>
+  <h1 style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">えいたんレーダー<small style="font-size:11px;font-weight:600;color:var(--ink3);white-space:nowrap">${APP_VERSION} ・ ${APP_DATE}</small></h1>
   <p class="sub">英検5級〜準1級。苦手を見つけて、つぶして、次の級へ。</p>
   ${w ? `<div class="hero"><small>いま いちばん苦手なところ</small>
     <div class="big">${w.t} × ${MODES[w.m]}</div>

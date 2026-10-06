@@ -13,7 +13,7 @@
 2. **配色は明るいライトのみ**。ダークモード対応は入れない（`color-scheme: light`）。トークンは `docs/spec.md` 参照。
 3. **秘密情報**：HTML に書いてよいのは Supabase の `anon` キーだけ。`service_role` / `ANTHROPIC_API_KEY` / `RESEND_API_KEY` / `LINE_*` は Edge Function の Secrets にのみ置く。Git にコミットしない。`.env` は `.gitignore`。
 4. **RLS 必須**：全テーブルで有効。ポリシーは `supabase/migrations/` に書いてあるものが正。変更するときは新しいマイグレーションを足す（既存ファイルを書き換えない）。
-5. **Service Worker は network-first**。`sw.js` の `CACHE_VERSION` を **push のたびに必ず上げる**（iOS PWA のキャッシュ対策）。
+5. **Service Worker は network-first**。`sw.js` の `CACHE_VERSION` を **push のたびに必ず上げる**（iOS PWA のキャッシュ対策）。あわせて `index.html` の `APP_VERSION` / `APP_DATE`（ホームのタイトル右に表示）も同じ番号・日付に上げる。
 6. **iOS 対応**：`viewport-fit=cover`、safe-area、入力欄は `font-size:16px` 以上（ズーム防止）、タップ領域 44px 以上。
 7. **フェーズ制**：Phase 1 → 実機確認 → Phase 2 → 実機確認 → Phase 3。確認なしに次へ進まない。未実装機能は UI ごと隠す（`FEATURES` フラグ）。
 8. **変更は最小限**：既存コードの全面書き換えをしない。直す箇所だけ直す。
