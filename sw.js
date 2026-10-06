@@ -1,6 +1,6 @@
 // network-first の Service Worker。
 // ★ push のたびに CACHE_VERSION を必ず上げること（iOS PWA で古いキャッシュが残る問題の対策）。
-const CACHE_VERSION = 'eitan-v1';
+const CACHE_VERSION = 'eitan-v2';
 const CORE = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {

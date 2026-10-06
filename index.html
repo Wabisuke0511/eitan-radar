@@ -198,6 +198,15 @@
   .ch[disabled] { cursor:default; }
   .inp { width:100%; font:inherit; font-size:22px; font-weight:700; padding:14px 16px; border-radius:16px; border:2px solid var(--line);
     background:var(--surface); color:var(--ink); margin-bottom:10px; }
+  .tiles { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:0 0 14px; }
+  .tile { min-width:44px; min-height:48px; padding:6px 12px; border-radius:12px; font-size:20px; font-weight:800; line-height:1.2;
+    background:var(--surface); border:2px solid var(--line); color:var(--ink); }
+  .tile.slot { background:var(--surface2); border-style:dashed; }
+  .tile.on { border-color:var(--primary); }
+  .tile.used { opacity:.25; }
+  .tile.ok { background:var(--good-bg); border-color:var(--good); }
+  .tile.ng { background:var(--bad-bg); border-color:var(--bad); }
+  .tiles.ans { padding:12px 8px; background:var(--surface); border:1px solid var(--line); border-radius:16px; }
   .fb { border-radius:16px; padding:14px 16px; margin:4px 0 12px; }
   .fb.ok { background:var(--good-bg); } .fb.ng { background:var(--bad-bg); }
   .fb .t { font-weight:800; font-size:17px; }
@@ -483,6 +492,7 @@ function startQuiz(pool, o){
     let mode = o.mode==='mix' ? pickMode(d) : o.mode;
     if(mode==='spell' && d.en.length>24) mode='en2ja';
     const q = {d,mode};
+    if(mode==='spell'){ q.sp = mkTiles(d); q.placed = []; }
     if(mode!=='spell'){
       const others = D.filter(x=>x.id!==d.id && x.type===d.type && x.ja!==d.ja && x.en!==d.en)
         .sort(()=>Math.random()-.5).sort((a,b)=>(a.lv===d.lv?0:1)-(b.lv===d.lv?0:1)).slice(0,3);
@@ -500,8 +510,37 @@ function closeQuiz(){
   document.getElementById('quiz').classList.remove('open'); try{speechSynthesis.cancel();}catch(e){} Q=null; render();
 }
 
-function renderQ(){
-  const el = document.getElementById('quiz');
+// スペルは並び替え：1語は文字タイル、2語以上（熟語・イディオム）は単語タイル
+function mkTiles(d){
+  const words = d.en.split(' ').filter(Boolean), unit = words.length>1 ? 'word' : 'char';
+  const parts = unit==='word' ? words : d.en.split('').filter(c=>/[A-Za-z0-9]/.test(c));
+  let order = parts.map((_,i)=>i);
+  for(let t=0; t<10; t++){
+    order.sort(()=>Math.random()-.5);
+    if(parts.length<2 || order.some((v,i)=>parts[v]!==parts[i])) break;   // 元の並びのままにしない
+  }
+  return { unit, parts, order };
+}
+function place(i){ const q = Q.qs[Q.i]; if(Q.ans!==null || q.placed.includes(i)) return; q.placed.push(i); renderQ(true); }
+function unplace(k){ const q = Q.qs[Q.i]; if(Q.ans!==null) return; q.placed.splice(k,1); renderQ(true); }
+function clearTiles(){ const q = Q.qs[Q.i]; if(Q.ans!==null) return; q.placed = []; renderQ(true); }
+function tilesHtml(q){
+  const sp = q.sp, done = Q.ans!==null;
+  const slots = sp.parts.map((_,k)=>{
+    if(q.placed[k]===undefined) return `<span class="tile slot"></span>`;
+    const t = esc(sp.parts[q.placed[k]]);
+    return done ? `<span class="tile ${Q.ans.ok?'ok':'ng'}">${t}</span>` : `<button class="tile on" aria-label="もどす" onclick="unplace(${k})">${t}</button>`;
+  }).join('');
+  if(done) return `<div class="tiles ans">${slots}</div>`;
+  const pool = sp.order.map(i=> q.placed.includes(i) ? `<span class="tile used">${esc(sp.parts[i])}</span>` : `<button class="tile" onclick="place(${i})">${esc(sp.parts[i])}</button>`).join('');
+  const full = q.placed.length===sp.parts.length;
+  return `<div class="tiles ans">${slots}</div><div class="tiles">${pool}</div>
+    <div class="row2"><button class="btn btn-sub" onclick="clearTiles()">やりなおす</button>
+    <button class="btn btn-main" ${full?'':'disabled style="opacity:.45"'} onclick="submitSpell()">こたえる</button></div>`;
+}
+
+function renderQ(keepScroll){
+  const el = document.getElementById('quiz'), keep = keepScroll===true ? el.scrollTop : 0;
   if(Q.i>=Q.qs.length) return renderResult();
   const q = Q.qs[Q.i], d = q.d;
   const top = `<div class="qtop"><button class="qx" aria-label="やめる" onclick="closeQuiz()">✕</button>
@@ -512,11 +551,9 @@ function renderQ(){
   if(q.mode==='ja2en') body = `<div class="qmode">英語でいうと？</div>
     <div class="qcard"><div class="qj">${esc(d.ja)}</div></div>${choiceHtml(q)}`;
   if(q.mode==='spell'){
-    const pat = d.en.split('').map(c=>c===' '?'　':'＿').join(' ');
-    body = `<div class="qmode">つづりを書こう</div>
-    <div class="qcard"><div class="qj">${esc(d.ja)}</div><div class="pat">${pat}</div><button class="qplay s" aria-label="発音" onclick="speakId(${d.id})">🔊</button></div>
-    ${Q.ans===null ? `<input class="inp" id="spin" type="text" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off" placeholder="えいごで入力" onkeydown="if(event.key==='Enter')submitSpell()">
-    <button class="btn btn-main" onclick="submitSpell()">こたえる</button>` : ''}`;
+    body = `<div class="qmode">${q.sp.unit==='word'?'ことばを ならべよう':'つづりを ならべよう'}</div>
+    <div class="qcard"><div class="qj">${esc(d.ja)}</div><button class="qplay s" aria-label="発音" onclick="speakId(${d.id})">🔊</button></div>
+    ${tilesHtml(q)}`;
   }
   let fb = '';
   if(Q.ans!==null){
@@ -528,8 +565,7 @@ function renderQ(){
       <button class="btn btn-main" onclick="nextQ()">${Q.i+1>=Q.qs.length?'けっかを見る':'つぎへ'}</button></div>`;
   }
   el.innerHTML = top + `<div class="qbody">${body}${fb}</div>`;
-  if(q.mode==='spell' && Q.ans===null){ const i=document.getElementById('spin'); if(i) setTimeout(()=>i.focus(),50); }
-  el.scrollTop = 0;
+  el.scrollTop = keep;
 }
 function choiceHtml(q){
   return q.choices.map((c,i)=>{
@@ -551,7 +587,9 @@ function pick(i){
 const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
 function submitSpell(){
   if(Q.ans!==null) return;
-  const q = Q.qs[Q.i], val = document.getElementById('spin').value;
+  const q = Q.qs[Q.i];
+  if(q.placed.length < q.sp.parts.length) return;
+  const val = q.placed.map(i=>q.sp.parts[i]).join(q.sp.unit==='word' ? ' ' : '');
   const ok = norm(val)===norm(q.d.en);
   Q.ans = {ok, val}; record(q.d, 'spell', ok); renderQ();
 }
