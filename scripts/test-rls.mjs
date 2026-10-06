@@ -9,6 +9,11 @@ for (const [k, v] of Object.entries({ SUPABASE_URL: URL_, SUPABASE_ANON_KEY: KEY
   if (!v) { console.error(`環境変数 ${k} が未設定です`); process.exit(2); }
 }
 
+// 想定外のエラーは、長いスタックトレースを出さず1行で表示する
+for (const ev of ['uncaughtException', 'unhandledRejection']) {
+  process.on(ev, (e) => { console.error('\nエラー: ' + (e && e.message ? e.message : e)); process.exitCode = 1; });
+}
+
 let failed = 0;
 const check = (name, ok, extra = '') => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${extra ? '  ' + extra : ''}`); if (!ok) failed++; };
 
@@ -89,4 +94,4 @@ for (const t of ['vocab_items', 'children', 'item_stats']) {
 }
 
 console.log(failed ? `\n${failed} 件 FAIL` : '\nすべて PASS');
-process.exit(failed ? 1 : 0);
+process.exitCode = failed ? 1 : 0;
