@@ -92,6 +92,14 @@
 
 **起動時のデータ読み込み**（ログイン後）：`children`（最初の1人。なければ名前入力→insert）→ `vocab_items`・`item_stats`・`level_progress`・`report_settings`（なければ初期行を insert）→ 直近60日の `study_sessions`（連続日数・今日の問題数）。クイズ終了後は `item_stats` と `level_progress` を再取得して画面を更新。
 
+**オフライン**（2026-10-06 追加）
+- 読み込みのたびに、サーバーの値（語彙・累計・クリア・履歴・まちがい）を端末（localStorage `eitan-snap-v1`）に保存する。通信できないとき、ログイン中の端末はこの保存で開く（ホームに「オフラインです」を表示）
+- オフラインでもクイズを解ける。結果は端末（`eitan-pending-<child_id>`）に残し、画面の成績には未送信ぶんを足して見せる
+- つながったとき（`online`）・アプリに戻ったときに自動で `submit_session` を送り、最新データを読み直す。送る前に、同じ `started_at` のセッションがサーバーにないか確かめる（二重記録の防止）
+- オフラインでは級クリアの判定・バナーは出ない（送信後の次回表示でクリアが反映される）
+- Service Worker は自サイトと Supabase JS（CDN）だけを network-first で保存する。Supabase の API はキャッシュしない
+- ログアウトすると、端末の保存（成績・未送信）は消える
+
 ## 9. 認証
 - Supabase Auth の**メール/パスワード認証**を「ログインID＋PIN（6桁以上）」として使う。メールは送らない（メールOTPは、カスタム SMTP なしでテンプレートを編集できないため見送り。iOS のホーム画面アプリではマジックリンクだと Safari 側で開いてセッションが分かれるため、それも使わない）
 - ログインID は半角英小文字・数字（3〜20字）。内部で `<id>@eitan-radar.invalid` を作って `email` に使う。新規は `signUp({ email, password })`、2回目以降は `signInWithPassword({ email, password })`。セッションは永続化（`persistSession:true`）。Supabase が偽メールの形式を受け付けるか、Phase 1 の最初に確認する

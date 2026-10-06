@@ -60,6 +60,7 @@ docs/                 ← 仕様・データ設計・セットアップ・各フ
 - 2026-10-04: 認証をメールOTPから「ログインID＋PIN」に変更（Supabase のメール/パスワード認証。ID から偽メール `<id>@eitan-radar.invalid` を作る）。理由：現在の Supabase はカスタム SMTP なしだとメールテンプレートを編集できず、6桁コードを送れないため。Auth の「Confirm email」はオフ、匿名サインインはオフ。2026-10-03 の「メールOTP」の記述はこれで置き換え。週間レポートの宛先メールは `report_settings.email` に保護者の実メールを別途入れる（Phase 2）。
 - 2026-10-04: Phase 1 実装。`index.html` は `mock/index.html` から作成（デザイン不変）。級は内部で数値（25=準2級/15=準1級）、DB との変換は `LV_FROM_DB`。クイズの保存は終了時に `submit_session` を1回だけ。失敗したセッションは `PENDING` に残して再送（ホームに案内カード）。`FEATURES = { ai:false, report:false, line:false }` で AI分析・週間レポートを非表示（コードは残す）。`report_settings` は Phase 2 で読み書きする。`scripts/test-rls.mjs` は RLS と集計の確認用（鍵・ID・PIN は環境変数）。
 - 2026-10-06: スペルの出題を「入力」から「並び替え」に変更（`mock/index.html` からの意図的な変更）。1語＝文字タイル、2語以上＝単語タイル。`mode` 名 `spell` と DB は変更なし。現在の語彙101語は動作確認用サンプルで、級の割り当ても仮（本番ライブラリは Phase 4）。
+- 2026-10-06: オフライン対応（Phase 1 に追加）。語彙・成績を localStorage に保存して通信なしで開き、クイズ結果は端末に溜めて、つながったら自動送信（詳細は `docs/spec.md`「オフライン」）。`sw.js` は Supabase JS の CDN も保存（`CACHE_VERSION` は `eitan-v3`）。
 
 ## 未決事項（コードを書く前に確認）
 - 語彙ライブラリの出どころ（市販単語帳の転載は不可。自作・生成して人間が確認）

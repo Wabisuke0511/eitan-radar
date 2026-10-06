@@ -350,6 +350,7 @@ function vHome(){
     <button class="btn btn-light" onclick="practiceCell('${w.t}','${w.m}','all')">ここを10問れんしゅう</button></div>`
   : `<div class="hero"><div class="big">まず10問やってみよう</div><div class="pct">答えるほど、苦手が見えてきます</div>
     <button class="btn btn-light" onclick="go('practice')">はじめる</button></div>`}
+  ${offlineBar()}
   ${pendingCard()}
   ${curCard()}
   ${FEATURES.report?reportCard():''}
@@ -603,7 +604,9 @@ function renderResult(){
     <p class="sub">${curLv()===null?'ぜんぶの級をクリアしました！':LVN[curLv()]+'が解放されました'}</p>
     <div style="height:10px"></div><button class="btn btn-main" onclick="closeQuiz();go('road')">ロードマップを見る</button></div>` : '';
   const msg = p>=.9 ? 'すばらしい！' : p>=.7 ? 'いいちょうし！' : p>=.4 ? 'あと少し！ まちがえた語を つぶそう' : 'まちがえた所が、のびしろ！';
-  const saveBox = !s ? '' : s.state==='error'
+  const saveBox = !s ? '' : (s.state==='error' && s.offline)
+    ? `<div class="subj" style="margin:12px 0 16px">📴 オフラインです。結果は端末に保存しました。つながったら自動で送ります。</div>`
+    : s.state==='error'
     ? `<div class="fb ng"><div class="t">保存できませんでした</div><div class="sub">通信を確かめて「もう一度」をおしてください。結果は消えません。</div></div>
        <button class="btn btn-main" style="margin-bottom:14px" onclick="retrySend()">もう一度</button>`
     : s.state==='done' ? `<p class="sub" style="margin:12px 0 16px">結果は弱点マップに反映されました。</p>`
@@ -922,7 +925,23 @@ function aiCard(){
 }
 
 /* ============ 起動 ============ */
-/* ============ Supabase 読み込み・保存 ============ */
+/* ============ Supabase 読み込み・保存（オフライン対応） ============ */
+// 端末に保存するもの：直前の語彙・成績（SNAP_KEY）と、まだ送れていないクイズ結果（pending）
+const SNAP_KEY = 'eitan-snap-v1';
+const pendKey = () => 'eitan-pending-' + (CHILD && CHILD.id);
+let OFFLINE = false, SYNCING = false;
+const isOffline = () => OFFLINE || !navigator.onLine;
+const lsGet = k => { try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } };
+const lsSet = (k,v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ console.error('localStorage', e); } };
+const lsDel = k => { try{ localStorage.removeItem(k); }catch(e){} };
+const authKeys = () => { try{ return Object.keys(localStorage).filter(k=>/^sb-.+-auth-token/.test(k)); }catch(e){ return []; } };
+const isNetErr = e => !!e && (e.name==='AuthRetryableFetchError' || e.name==='TypeError' || /fetch|network|load failed/i.test(String(e.message||'')));
+
+function saveSnap(srv){ lsSet(SNAP_KEY, { v:1, userId:USER.id, child:CHILD, D, THEMES, S:srv, savedAt:Date.now() }); }
+function readSnap(uid){ const s = lsGet(SNAP_KEY); return (s && s.v===1 && s.child && (!uid || s.userId===uid)) ? s : null; }
+function persistPending(){ lsSet(pendKey(), PENDING.map(s=>({ id:s.id, started:s.started, answers:s.answers }))); }
+function loadPending(){ PENDING = (lsGet(pendKey()) || []).map(s=>({ ...s, state:'error', newly:[], resumed:true, offline:true })); }
+
 async function fetchAll(build){
   const out = [];
   for(let from=0;; from+=1000){
@@ -940,6 +959,18 @@ async function loadVocab(){
   const have = new Set(D.map(d=>d.theme));
   THEMES = [...THEME_ORDER.filter(t=>have.has(t)), ...[...have].filter(t=>!THEME_ORDER.includes(t)).sort()];
 }
+// まだ送れていない結果を、画面用の状態（S）に足す（サーバーの値 ＋ 未送信ぶん）
+function applyLocal(answers){
+  const bm = {}, wrong = [];
+  for(const a of answers){
+    const m = (S.stats[a.item_id] = S.stats[a.item_id] || {}), x = (m[a.mode] = m[a.mode] || { s:0, c:0 });
+    x.s++; if(a.correct) x.c++; else wrong.push(a.item_id);
+    (bm[a.mode] = bm[a.mode] || [0,0])[0]++; if(a.correct) bm[a.mode][1]++;
+  }
+  S.today += answers.length;
+  S.sessions.push({ d:ymd(), n:answers.length, c:answers.filter(a=>a.correct).length, sec:0, bm });
+  S.recent = [...new Set([...wrong.reverse(), ...S.recent])].filter(id=>byId(id)).slice(0,12);
+}
 // 累計・クリア・学習履歴・まちがい。すべて取れたときだけ画面用の状態を差し替える
 async function refreshData(){
   const cid = CHILD.id, since = new Date(Date.now()-60*86400e3).toISOString();
@@ -952,33 +983,48 @@ async function refreshData(){
   for(const r of [prog,sess,wrong]) if(r.error) throw r.error;
   const bag = {};
   for(const r of stats){ (bag[r.item_id] = bag[r.item_id]||{})[r.mode] = { s:r.seen, c:r.correct }; }
-  S.stats = bag;
-  S.cleared = {};
-  for(const r of prog.data){ const l = LV_FROM_DB[r.level]; if(l) S.cleared[l] = true; }
-  S.sessions = sess.data.map(r=>({ d:ymd(new Date(r.started_at)), n:r.question_count, c:r.correct_count, sec:r.duration_sec, bm:r.by_mode||{} }));
-  S.today = S.sessions.filter(x=>x.d===ymd()).reduce((a,x)=>a+x.n,0);
-  const seen = new Set(); S.recent = [];
+  const srv = { stats:bag, cleared:{}, sessions:[], today:0, recent:[] };
+  for(const r of prog.data){ const l = LV_FROM_DB[r.level]; if(l) srv.cleared[l] = true; }
+  srv.sessions = sess.data.map(r=>({ d:ymd(new Date(r.started_at)), n:r.question_count, c:r.correct_count, sec:r.duration_sec, bm:r.by_mode||{} }));
+  srv.today = srv.sessions.filter(x=>x.d===ymd()).reduce((a,x)=>a+x.n,0);
+  const seen = new Set();
   for(const r of wrong.data){
     if(seen.has(r.item_id) || !byId(r.item_id)) continue;
-    seen.add(r.item_id); S.recent.push(r.item_id);
-    if(S.recent.length >= 12) break;
+    seen.add(r.item_id); srv.recent.push(r.item_id);
+    if(srv.recent.length >= 12) break;
   }
+  saveSnap(srv);                 // 端末には「サーバーの値」だけを保存する
+  Object.assign(S, srv);
+  PENDING.forEach(s=>applyLocal(s.answers));
 }
-function mkSess(){ return { started:new Date(Q.t0).toISOString(), answers:Q.answers.slice(), state:'new', newly:[] }; }
-// クイズ1回分を submit_session で保存。失敗したら PENDING に残して再送できるようにする
+function mkSess(){
+  const s = { id:Date.now()+'-'+Math.random().toString(36).slice(2,8), started:new Date(Q.t0).toISOString(), answers:Q.answers.slice(), state:'new', newly:[] };
+  PENDING.push(s); persistPending(); applyLocal(s.answers);   // 端末に残してから送る
+  return s;
+}
+// クイズ1回分を submit_session で保存。送れなければ端末に残して、つながったら再送する
 async function sendSession(s){
   if(s.state==='saving' || s.state==='done') return;
   s.state = 'saving';
   try{
-    const { data, error } = await sb.rpc('submit_session', { p_child:CHILD.id, p_started:s.started, p_answers:s.answers });
-    if(error) throw error;
-    s.newly = ((data && data.newly_cleared) || []).map(c=>LV_FROM_DB[c]).filter(Boolean);
-    s.state = 'done';
-    PENDING = PENDING.filter(x=>x!==s);
+    if(!navigator.onLine || !sb) throw Object.assign(new Error('offline'), { offline:true });
+    if(s.resumed || s.tried){   // 前回の送信が届いていないか、先に確かめる（二重記録の防止）
+      const dup = await sb.from('study_sessions').select('id').eq('child_id',CHILD.id).eq('started_at',s.started).limit(1);
+      if(!dup.error && dup.data.length){ s.state = 'done'; s.newly = []; }
+    }
+    if(s.state!=='done'){
+      s.tried = true;
+      const { data, error } = await sb.rpc('submit_session', { p_child:CHILD.id, p_started:s.started, p_answers:s.answers });
+      if(error) throw error;
+      s.newly = ((data && data.newly_cleared) || []).map(c=>LV_FROM_DB[c]).filter(Boolean);
+      s.state = 'done';
+    }
+    PENDING = PENDING.filter(x=>x!==s); persistPending();
+    OFFLINE = false;
   }catch(e){
     console.error('submit_session failed', e);
-    s.state = 'error';
-    if(!PENDING.includes(s)) PENDING.push(s);
+    s.state = 'error'; s.offline = !!(e && e.offline) || isNetErr(e);
+    if(s.offline) OFFLINE = true;
   }
   if(s.state==='done'){ try{ await refreshData(); }catch(e){ console.error('refresh failed', e); } }
   if(Q && Q.sess===s) renderResult();
@@ -988,9 +1034,27 @@ async function flushPending(){
   for(const s of [...PENDING]) await sendSession(s);
   render();
 }
+// つながったとき・アプリに戻ったときに、未送信の結果を送って最新データを読み直す
+async function syncNow(){
+  if(SYNCING || !CHILD) return;
+  if(!sb){ if(!Q && navigator.onLine) location.reload(); return; }
+  if(!navigator.onLine) return;
+  SYNCING = true;
+  try{
+    if(PENDING.length) await flushPending();
+    if(OFFLINE && !PENDING.length){ await refreshData(); OFFLINE = false; }
+  }catch(e){ console.error('sync failed', e); }
+  SYNCING = false; render();
+}
+function offlineBar(){
+  if(!isOffline()) return '';
+  const n = PENDING.filter(s=>s.state!=='saving').length;
+  return `<div class="subj" style="margin-top:12px">📴 オフラインです。クイズは解けます。結果は端末に保存して、つながったら自動で送ります。${n?`（まだ送れていない結果：${n}回分）`:''}</div>`;
+}
 function pendingCard(){
-  if(!PENDING.length) return '';
-  return `<div class="fb ng" style="margin-top:12px"><div class="t">保存できていない結果があります（${PENDING.length}回分）</div>
+  const n = PENDING.filter(s=>s.state!=='saving').length;
+  if(!n || isOffline()) return '';
+  return `<div class="fb ng" style="margin-top:12px"><div class="t">保存できていない結果があります（${n}回分）</div>
     <div class="sub">通信を確かめて、もう一度おくってください。</div>
     <button class="btn btn-main" style="min-height:44px;padding:8px;margin-top:8px" onclick="flushPending()">もう一度おくる</button></div>`;
 }
@@ -1068,40 +1132,60 @@ async function submitName(){
   if(error){ console.error(error); btn.disabled = false; return msg('保存できませんでした。もう一度ためしてください'); }
   await startApp(USER);
 }
+// 通信できないとき：端末に保存した直前のデータで開く（ログイン中の端末だけ）
+function offlineStart(uid){
+  const snap = readSnap(uid);
+  if(!snap || !authKeys().length) return false;
+  USER = { id:snap.userId }; CHILD = snap.child; D = snap.D; THEMES = snap.THEMES;
+  Object.assign(S, snap.S);
+  loadPending(); PENDING.forEach(s=>applyLocal(s.answers));
+  OFFLINE = true; gate(false);
+  C.lv = [curLv() || 5]; UI.tab = 'home';
+  render(); window.scrollTo(0,0);
+  return true;
+}
 async function startApp(user){
   USER = user;
   try{
     const r = await sb.from('children').select('id,name').order('created_at').limit(1);
     if(r.error) throw r.error;
     if(!r.data.length) return showNameForm();
-    CHILD = r.data[0];
+    CHILD = r.data[0]; loadPending();
     await loadVocab();
     await refreshData();
   }catch(e){
     console.error(e);
+    if(offlineStart(user.id)) return;
     return showFatal('データを読みこめませんでした。通信を確かめて、もう一度ためしてください。');
   }
-  gate(false);
+  OFFLINE = false; gate(false);
   C.lv = [curLv() || 5]; UI.tab = 'home';
   render(); window.scrollTo(0,0);
+  syncNow();   // 前回送れなかった結果があれば送る
 }
 async function logout(){
   if(PENDING.length && !confirm('保存できていない結果があります。ログアウトすると失われます。ログアウトしますか？')) return;
+  if(CHILD){ lsDel(pendKey()); }
+  lsDel(SNAP_KEY);
   try{ await sb.auth.signOut(); }catch(e){}
+  authKeys().forEach(k=>lsDel(k));   // 通信できなくても、この端末のログインは必ず消す
   location.reload();
 }
 async function boot(){
   gate(true);
   document.getElementById('app').innerHTML = '<div class="empty">よみこみ中…</div>';
-  if(!window.supabase) return showFatal('通信できませんでした。電波のよいところで、もう一度ひらいてください。');
-  if(!sb) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:false } });
+  if(!sb && window.supabase) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:false } });
+  const offMsg = '通信できませんでした。電波のよいところで、もう一度ひらいてください。';
+  if(!sb){ if(!offlineStart()) showFatal(offMsg); return; }
   let r;
   try{ r = await sb.auth.getSession(); }catch(e){ r = { error:e }; }
-  if(r.error) return showFatal('通信できませんでした。電波のよいところで、もう一度ためしてください。');
+  if(r.error){ if(!offlineStart()) showFatal(offMsg); return; }
   if(!r.data.session) return showAuth('login');
   await startApp(r.data.session.user);
 }
-window.addEventListener('online', () => { if(PENDING.length) flushPending(); });
+window.addEventListener('online', syncNow);
+window.addEventListener('offline', () => { if(!document.body.classList.contains('gate') && !Q) render(); });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible' && (PENDING.length || OFFLINE)) syncNow(); });
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 boot();
 </script>
