@@ -560,7 +560,7 @@ insert into public.vocab_items (level, en, ja, type, theme, example_en, example_
   ('4', 'look like ～', '～のように見える', 'phrase', 'いろ・ようす', 'That cloud [[looks like]] a fish.', 'あの雲は魚の[[ように見える]]。', true),
   ('4', 'be good at ～', '～が得意だ', 'phrase', 'きもち', 'Ken [[is good at]] soccer.', 'ケンはサッカーが[[得意だ]]。', true),
   ('4', 'come back', 'もどってくる', 'phrase', 'うごき', 'Please [[come back]] by five.', '5時までに[[もどってきて]]。', true),
-  ('4', 'have a good time', '楽しい時を過ごす', 'phrase', 'あそび・スポーツ', 'We [[had a good time]] at the beach.', '私たちは浜辺で[[楽しく過ごした]]。', true),
+  ('4', 'have a good time', '楽しく過ごす', 'phrase', 'あそび・スポーツ', 'We [[had a good time]] at the beach.', '私たちは浜辺で[[楽しく過ごした]]。', true),
   ('4', 'talk with ～', '～と話す', 'phrase', 'うごき', 'I [[talked with]] my teacher after class.', '授業のあと先生[[と話した]]。', true),
   ('4', 'arrive at ～', '～に着く', 'phrase', 'うごき', 'We [[arrived at]] the station at noon.', '私たちは正午に駅[[に着いた]]。', true),
   ('4', 'all day', '一日中', 'phrase', 'じかん', 'It rained [[all day]].', '[[一日中]]雨がふった。', true),

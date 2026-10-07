@@ -246,7 +246,7 @@ const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:false, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v5', APP_DATE = '2026-10-07';
+const APP_VERSION = 'v6', APP_DATE = '2026-10-08';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -294,7 +294,8 @@ function weakestCell(lv){
 }
 const pct = a => Math.round(a*100);
 const heat = a => `--h:${Math.round(4+a*126)}`;
-const mastered = d => { const x=itemAgg(d.id); return x.s>=3 && x.c/x.s>=.8; };
+// 「おぼえた」＝その級のクリア条件の正解回数（REQ）に届いた語
+const mastered = d => itemAgg(d.id).c >= REQ[d.lv];
 const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function speak(t){
   try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=.85; speechSynthesis.speak(u); }catch(e){}
@@ -373,7 +374,7 @@ function vHome(){
     <div><b>${D.filter(mastered).length}</b><span>おぼえた語</span></div>
   </div>
   <h2>級ごとの「おぼえた」</h2>${lvRows}
-  <p class="sub">3回以上こたえて、正答率80%以上で「おぼえた」</p>
+  <p class="sub">正解すると「おぼえた」（5〜3級は1回、準2級〜準1級は2回）</p>
   <h2>さいきん まちがえた語</h2>
   <div class="list">${recent || '<div class="empty">まだありません</div>'}</div>
   <div style="text-align:center;margin-top:24px"><button onclick="logout()" style="min-height:44px;padding:0 16px;font-size:12px;color:var(--ink3);text-decoration:underline">ログアウト</button></div>`;
