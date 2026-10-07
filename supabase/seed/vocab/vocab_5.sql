@@ -2,7 +2,7 @@
 -- 単語の選定は CEFR-J Wordlist Version 1.6（東京外国語大学投野由紀夫研究室）を元にしている。
 -- Supabase の SQL Editor で実行する。同じ (level, en) があれば内容を上書きし、id は変えない（記録を壊さない）。
 begin;
--- 動作確認用のサンプル（id 1〜101）は使わない。同じ語は下の insert で有効に戻る
+-- 動作確認用のサンプル（id 1〜101）は使わない。同じ語は下の insert で有効に戻る（この処理は5級の SQL だけに入れる）
 update public.vocab_items set active = false where id between 1 and 101;
 insert into public.vocab_items (level, en, ja, type, theme, example_en, example_ja, active) values
   ('5', 'apple', 'りんご', 'word', 'たべもの', null, null, true),

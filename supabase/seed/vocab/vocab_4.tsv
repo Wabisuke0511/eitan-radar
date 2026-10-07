@@ -1,0 +1,581 @@
+level	type	theme	en	ja	example_en	example_ja
+4	word	たべもの	beef	牛肉
+4	word	たべもの	biscuit	ビスケット
+4	word	たべもの	bean	豆
+4	word	たべもの	bowl	おわん、どんぶり
+4	word	たべもの	cream	クリーム
+4	word	たべもの	meal	食事
+4	word	たべもの	curry	カレー
+4	word	たべもの	carrot	にんじん
+4	word	たべもの	onion	たまねぎ
+4	word	たべもの	lemon	レモン
+4	word	たべもの	melon	メロン
+4	word	たべもの	pear	洋なし
+4	word	たべもの	mushroom	きのこ
+4	word	たべもの	salt	塩
+4	word	たべもの	pepper	こしょう
+4	word	たべもの	sausage	ソーセージ
+4	word	たべもの	steak	ステーキ
+4	word	たべもの	spaghetti	スパゲッティ
+4	word	たべもの	dessert	デザート
+4	word	たべもの	snack	おやつ、軽食
+4	word	たべもの	honey	はちみつ
+4	word	たべもの	jam	ジャム
+4	word	たべもの	ham	ハム
+4	word	たべもの	fork	フォーク
+4	word	たべもの	spoon	スプーン
+4	word	たべもの	plate	取り皿
+4	word	たべもの	toast	トースト
+4	word	たべもの	menu	メニュー
+4	word	たべもの	seafood	魚介類
+4	word	どうぶつ	duck	アヒル
+4	word	どうぶつ	elephant	ゾウ
+4	word	どうぶつ	insect	こん虫
+4	word	どうぶつ	dinosaur	恐竜
+4	word	かぞく・ひと	grandparent	祖父母
+4	word	かぞく・ひと	parent	親
+4	word	かぞく・ひと	husband	夫
+4	word	かぞく・ひと	wife	妻
+4	word	かぞく・ひと	person	人
+4	word	かぞく・ひと	guest	招待客
+4	word	かぞく・ひと	neighbor	近所の人
+4	word	かぞく・ひと	king	王
+4	word	かぞく・ひと	queen	女王
+4	word	かぞく・ひと	prince	王子
+4	word	かぞく・ひと	princess	王女
+4	word	かぞく・ひと	actor	俳優
+4	word	かぞく・ひと	musician	音楽家
+4	word	かぞく・ひと	writer	作家
+4	word	かぞく・ひと	scientist	科学者
+4	word	かぞく・ひと	engineer	技術者
+4	word	かぞく・ひと	reporter	記者
+4	word	かぞく・ひと	police officer	警察官
+4	word	かぞく・ひと	waiter	ウエーター
+4	word	かぞく・ひと	worker	働く人
+4	word	かぞく・ひと	leader	リーダー
+4	word	かぞく・ひと	coach	コーチ
+4	word	かぞく・ひと	owner	持ち主
+4	word	かぞく・ひと	visitor	訪問者
+4	word	かぞく・ひと	tourist	観光客
+4	word	かぞく・ひと	pilot	パイロット
+4	word	かぞく・ひと	dentist	歯医者
+4	word	かぞく・ひと	teenager	10代の若者
+4	word	かぞく・ひと	adult	おとな
+4	word	かぞく・ひと	member	メンバー、一員
+4	word	かぞく・ひと	fan	ファン
+4	word	かぞく・ひと	hero	ヒーロー、英雄
+4	word	かぞく・ひと	partner	相手、パートナー
+4	word	かぞく・ひと	dancer	ダンサー
+4	word	かぞく・ひと	painter	画家
+4	word	かぞく・ひと	customer	（店の）客
+4	word	かぞく・ひと	passenger	乗客
+4	word	かぞく・ひと	stranger	知らない人
+4	word	かぞく・ひと	captain	キャプテン、船長
+4	word	かぞく・ひと	Mr.	〜さん（男性）
+4	word	かぞく・ひと	Ms.	〜さん（女性）
+4	word	かぞく・ひと	kid	子ども（くだけた言い方）
+4	word	からだ	heart	心臓、心
+4	word	からだ	brain	脳
+4	word	からだ	bone	骨
+4	word	からだ	headache	頭痛
+4	word	からだ	fever	熱（病気の）
+4	word	からだ	health	健康
+4	word	からだ	medicine	薬
+4	word	からだ	stomach	おなか、胃
+4	word	からだ	stomachache	腹痛
+4	word	からだ	toothache	歯の痛み
+4	word	からだ	toe	足の指
+4	word	からだ	lip	くちびる
+4	word	からだ	cheek	ほお
+4	word	からだ	voice	声
+4	word	からだ	blood	血
+4	word	がっこう	grade	学年、成績
+4	word	がっこう	grammar	文法
+4	word	がっこう	language	言語
+4	word	がっこう	sentence	文
+4	word	がっこう	page	ページ
+4	word	がっこう	ruler	定規
+4	word	がっこう	list	一覧表、リスト
+4	word	がっこう	note	メモ
+4	word	がっこう	example	例
+4	word	がっこう	problem	問題
+4	word	がっこう	reason	理由
+4	word	がっこう	idea	考え、アイデア
+4	word	がっこう	information	情報
+4	word	がっこう	rule	規則
+4	word	がっこう	speech	スピーチ
+4	word	がっこう	poem	詩
+4	word	がっこう	magazine	雑誌
+4	word	がっこう	newspaper	新聞
+4	word	がっこう	news	ニュース
+4	word	がっこう	message	伝言、メッセージ
+4	word	がっこう	email	Eメール
+4	word	がっこう	textbook	教科書
+4	word	がっこう	exam	試験
+4	word	がっこう	uniform	制服
+4	word	がっこう	university	大学
+4	word	がっこう	high school	高校
+4	word	がっこう	playground	運動場
+4	word	がっこう	blackboard	黒板
+4	word	がっこう	calendar	カレンダー
+4	word	がっこう	diary	日記
+4	word	がっこう	vocabulary	語い
+4	word	がっこう	mistake	まちがい
+4	word	がっこう	quiz	クイズ
+4	word	がっこう	report	報告、レポート
+4	word	がっこう	contest	コンテスト
+4	word	ばしょ	building	建物
+4	word	ばしょ	church	教会
+4	word	ばしょ	cinema	映画館
+4	word	ばしょ	theater	劇場
+4	word	ばしょ	office	事務所、会社
+4	word	ばしょ	factory	工場
+4	word	ばしょ	palace	宮殿
+4	word	ばしょ	tower	塔
+4	word	ばしょ	hall	ホール、会館
+4	word	ばしょ	hill	丘
+4	word	ばしょ	field	野原、畑
+4	word	ばしょ	ground	地面
+4	word	ばしょ	yard	（家の）裏庭
+4	word	ばしょ	corner	角
+4	word	ばしょ	floor	床、（建物の）階
+4	word	ばしょ	wall	かべ
+4	word	ばしょ	living room	居間
+4	word	ばしょ	dining room	食堂
+4	word	ばしょ	place	場所
+4	word	ばしょ	hometown	故郷
+4	word	ばしょ	museum	博物館、美術館
+4	word	ばしょ	castle	城
+4	word	ばしょ	village	村
+4	word	ばしょ	lake	湖
+4	word	ばしょ	forest	森
+4	word	ばしょ	country	国
+4	word	ばしょ	countryside	いなか
+4	word	ばしょ	apartment	アパート、マンション
+4	word	ばしょ	market	市場
+4	word	ばしょ	post office	郵便局
+4	word	ばしょ	police station	警察署
+4	word	ばしょ	department store	デパート
+4	word	ばしょ	bus stop	バス停
+4	word	ばしょ	road	道路
+4	word	ばしょ	stadium	スタジアム
+4	word	ばしょ	earth	地球
+4	word	ばしょ	space	宇宙
+4	word	ばしょ	east	東
+4	word	ばしょ	west	西
+4	word	ばしょ	north	北
+4	word	ばしょ	south	南
+4	word	ばしょ	abroad	外国へ、外国で
+4	word	もの	album	アルバム
+4	word	もの	bell	ベル、かね
+4	word	もの	brush	ブラシ、筆
+4	word	もの	bucket	バケツ
+4	word	もの	button	ボタン
+4	word	もの	clothes	服
+4	word	もの	cloth	布
+4	word	もの	sofa	ソファー
+4	word	もの	drum	たいこ、ドラム
+4	word	もの	flag	旗
+4	word	もの	glasses	めがね
+4	word	もの	gift	おくり物
+4	word	もの	jeans	ジーンズ
+4	word	もの	jewelry	宝石類
+4	word	もの	machine	機械
+4	word	もの	mail	郵便
+4	word	もの	photo	写真
+4	word	もの	pocket	ポケット
+4	word	もの	poster	ポスター
+4	word	もの	shelf	たな
+4	word	もの	stone	石
+4	word	もの	tool	道具
+4	word	もの	truck	トラック
+4	word	もの	taxi	タクシー
+4	word	もの	subway	地下鉄
+4	word	もの	T-shirt	Tシャツ
+4	word	もの	pants	ズボン
+4	word	もの	vase	花びん
+4	word	もの	video	ビデオ、動画
+4	word	もの	wheel	車輪
+4	word	もの	mirror	鏡
+4	word	もの	lamp	電気スタンド、ランプ
+4	word	もの	refrigerator	冷蔵庫
+4	word	もの	blanket	毛布
+4	word	もの	sock	くつ下
+4	word	もの	scarf	マフラー、スカーフ
+4	word	もの	glove	手ぶくろ
+4	word	もの	sweater	セーター
+4	word	もの	raincoat	レインコート
+4	word	もの	wallet	さいふ
+4	word	もの	coin	硬貨
+4	word	もの	stamp	切手
+4	word	もの	printer	プリンター
+4	word	もの	battery	電池
+4	word	もの	violin	バイオリン
+4	word	もの	instrument	楽器
+4	word	もの	toothbrush	歯ブラシ
+4	word	もの	soap	せっけん
+4	word	もの	scissors	はさみ
+4	word	もの	suitcase	スーツケース
+4	word	もの	ring	指輪
+4	word	あそび・スポーツ	band	バンド
+4	word	あそび・スポーツ	cartoon	（テレビの）アニメ、まんが
+4	word	あそび・スポーツ	drama	ドラマ、劇
+4	word	あそび・スポーツ	football	フットボール
+4	word	あそび・スポーツ	match	（スポーツの）試合
+4	word	あそび・スポーツ	goal	ゴール、目標
+4	word	あそび・スポーツ	event	行事、出来事
+4	word	あそび・スポーツ	Olympics	オリンピック
+4	word	あそび・スポーツ	vacation	休暇
+4	word	あそび・スポーツ	golf	ゴルフ
+4	word	あそび・スポーツ	badminton	バドミントン
+4	word	あそび・スポーツ	table tennis	卓球
+4	word	あそび・スポーツ	hiking	ハイキング
+4	word	あそび・スポーツ	skiing	スキー
+4	word	あそび・スポーツ	skating	スケート
+4	word	あそび・スポーツ	video game	テレビゲーム
+4	word	あそび・スポーツ	comic	まんが本
+4	word	あそび・スポーツ	magic	手品、魔法
+4	word	あそび・スポーツ	chess	チェス
+4	word	あそび・スポーツ	bat	バット
+4	word	あそび・スポーツ	racket	ラケット
+4	word	あそび・スポーツ	sightseeing	観光
+4	word	あそび・スポーツ	tour	ツアー、見学
+4	word	しぜん・てんき	ice	氷
+4	word	しぜん・てんき	fire	火、火事
+4	word	しぜん・てんき	grass	草、しばふ
+4	word	しぜん・てんき	rose	バラ
+4	word	しぜん・てんき	sunshine	日光
+4	word	しぜん・てんき	fog	きり
+4	word	しぜん・てんき	storm	あらし
+4	word	しぜん・てんき	wave	波
+4	word	しぜん・てんき	plant	植物
+4	word	しぜん・てんき	seed	種
+4	word	しぜん・てんき	sunflower	ひまわり
+4	word	しぜん・てんき	nature	自然
+4	word	しぜん・てんき	air	空気
+4	word	しぜん・てんき	foggy	きりの深い
+4	word	しぜん・てんき	windy	風の強い
+4	word	しぜん・てんき	temperature	温度、気温
+4	word	じかん	tonight	今夜
+4	word	じかん	a.m.	午前（時刻のあとにつける）
+4	word	じかん	p.m.	午後（時刻のあとにつける）
+4	word	じかん	date	日付
+4	word	じかん	future	未来、将来
+4	word	じかん	moment	ちょっとの間
+4	word	じかん	quarter	4分の1、15分
+4	word	じかん	end	終わり
+4	word	じかん	ago	〜前に
+4	word	じかん	soon	すぐに
+4	word	じかん	early	早く
+4	word	じかん	late	おそく、おくれて
+4	word	じかん	later	あとで
+4	word	じかん	before	〜の前に
+4	word	じかん	after	〜のあとに
+4	word	じかん	until	〜まで（ずっと）
+4	word	じかん	noon	正午
+4	word	じかん	midnight	真夜中
+4	word	じかん	century	世紀
+4	word	じかん	weekday	平日
+4	word	じかん	schedule	予定
+4	word	かず	number	数、番号
+4	word	かず	dollar	ドル
+4	word	かず	price	値段
+4	word	かず	size	大きさ、サイズ
+4	word	かず	half	半分
+4	word	かず	hundred	100
+4	word	かず	thousand	1000
+4	word	かず	zero	0
+4	word	かず	first	1番目の、最初の
+4	word	かず	second	2番目の
+4	word	かず	third	3番目の
+4	word	いろ・ようす	gold	金の、金色の
+4	word	いろ・ようす	silver	銀の、銀色の
+4	word	いろ・ようす	large	（広さ・量が）大きい
+4	word	いろ・ようす	little	少しの、小さい
+4	word	いろ・ようす	thick	厚い
+4	word	いろ・ようす	thin	うすい、やせた
+4	word	いろ・ようす	fat	太った
+4	word	いろ・ようす	full	いっぱいの
+4	word	いろ・ようす	dry	かわいた
+4	word	いろ・ようす	light	軽い
+4	word	いろ・ようす	expensive	値段が高い
+4	word	いろ・ようす	cheap	安い
+4	word	いろ・ようす	important	大切な
+4	word	いろ・ようす	special	特別な
+4	word	いろ・ようす	strange	奇妙な、ふしぎな
+4	word	いろ・ようす	terrible	ひどい
+4	word	いろ・ようす	excellent	とても優れた
+4	word	いろ・ようす	lovely	愛らしい
+4	word	いろ・ようす	healthy	健康な
+4	word	いろ・ようす	lucky	運のよい
+4	word	いろ・ようす	handsome	ハンサムな
+4	word	いろ・ようす	clever	りこうな
+4	word	いろ・ようす	smart	頭のいい
+4	word	いろ・ようす	lazy	なまけた
+4	word	いろ・ようす	shy	はずかしがりの
+4	word	いろ・ようす	kind	親切な
+4	word	いろ・ようす	careful	注意深い
+4	word	いろ・ようす	correct	（答えなどが）正しい
+4	word	いろ・ようす	wrong	まちがった
+4	word	いろ・ようす	true	本当の
+4	word	いろ・ようす	real	本物の
+4	word	いろ・ようす	own	自分自身の
+4	word	いろ・ようす	front	前の
+4	word	いろ・ようす	middle	まん中の
+4	word	いろ・ようす	foreign	外国の
+4	word	いろ・ようす	boring	退屈な
+4	word	いろ・ようす	broken	こわれた
+4	word	いろ・ようす	safe	安全な
+4	word	いろ・ようす	dangerous	危険な
+4	word	いろ・ようす	popular	人気のある
+4	word	いろ・ようす	useful	役に立つ
+4	word	いろ・ようす	simple	単純な
+4	word	いろ・ようす	empty	からっぽの
+4	word	いろ・ようす	wet	ぬれた
+4	word	いろ・ようす	soft	やわらかい
+4	word	いろ・ようす	hard	かたい、難しい
+4	word	いろ・ようす	quick	すばやい
+4	word	いろ・ようす	noisy	うるさい
+4	word	いろ・ようす	fresh	新鮮な
+4	word	いろ・ようす	fantastic	最高の
+4	word	いろ・ようす	perfect	完ぺきな
+4	word	いろ・ようす	modern	現代の
+4	word	いろ・ようす	traditional	伝統的な
+4	word	いろ・ようす	international	国際的な
+4	word	いろ・ようす	local	地元の
+4	word	いろ・ようす	wild	野生の
+4	word	いろ・ようす	wide	（はばが）広い
+4	word	いろ・ようす	low	低い
+4	word	いろ・ようす	weak	弱い
+4	word	いろ・ようす	poor	貧しい、かわいそうな
+4	word	いろ・ようす	sure	確かな
+4	word	いろ・ようす	possible	可能な
+4	word	いろ・ようす	impossible	不可能な
+4	word	いろ・ようす	necessary	必要な
+4	word	いろ・ようす	comfortable	快適な
+4	word	いろ・ようす	crowded	こんでいる
+4	word	いろ・ようす	alive	生きている
+4	word	きもち	interested	興味がある
+4	word	きもち	bored	退屈した
+4	word	きもち	surprised	おどろいた
+4	word	きもち	worried	心配した
+4	word	きもち	sleepy	ねむい
+4	word	きもち	thirsty	のどがかわいた
+4	word	きもち	nervous	緊張した
+4	word	きもち	pleased	喜んだ
+4	word	きもち	upset	動揺した
+4	word	きもち	disappointed	がっかりした
+4	word	きもち	feeling	気持ち
+4	word	きもち	hope	希望
+4	word	きもち	wish	願い
+4	word	きもち	luck	運
+4	word	きもち	peace	平和
+4	word	きもち	surprise	おどろき
+4	word	きもち	smile	ほほえみ
+4	word	きもち	memory	思い出、記憶
+4	word	きもち	mind	心、精神
+4	word	きもち	friendship	友情
+4	word	きもち	happiness	幸福
+4	word	きもち	joy	喜び
+4	word	きもち	fear	おそれ
+4	word	うごき	add	加える
+4	word	うごき	agree	賛成する
+4	word	うごき	arrive	着く
+4	word	うごき	become	〜になる
+4	word	うごき	begin	始まる、始める
+4	word	うごき	believe	信じる
+4	word	うごき	borrow	借りる
+4	word	うごき	lend	貸す
+4	word	うごき	break	こわす
+4	word	うごき	bring	持ってくる
+4	word	うごき	build	建てる
+4	word	うごき	celebrate	祝う
+4	word	うごき	change	変える
+4	word	うごき	choose	選ぶ
+4	word	うごき	collect	集める
+4	word	うごき	cut	切る
+4	word	うごき	describe	（ようすを）述べる
+4	word	うごき	explain	説明する
+4	word	うごき	drop	落とす
+4	word	うごき	exercise	運動する
+4	word	うごき	feel	感じる
+4	word	うごき	fill	満たす
+4	word	うごき	forget	忘れる
+4	word	うごき	grow	育つ、育てる
+4	word	うごき	guess	推測する
+4	word	うごき	happen	起こる
+4	word	うごき	hide	かくれる、かくす
+4	word	うごき	hurt	傷つける、痛む
+4	word	うごき	imagine	想像する
+4	word	うごき	introduce	紹介する
+4	word	うごき	join	参加する、加わる
+4	word	うごき	keep	保つ、持ち続ける
+4	word	うごき	laugh	（声を出して）笑う
+4	word	うごき	leave	出発する、去る
+4	word	うごき	lose	失う、負ける
+4	word	うごき	miss	乗りおくれる、さびしく思う
+4	word	うごき	pay	（お金を）払う
+4	word	うごき	pick	つむ、選ぶ
+4	word	うごき	push	おす
+4	word	うごき	pull	引く
+4	word	うごき	remember	覚えている、思い出す
+4	word	うごき	repeat	くり返す
+4	word	うごき	save	救う、節約する
+4	word	うごき	send	送る
+4	word	うごき	share	分け合う
+4	word	うごき	show	見せる
+4	word	うごき	spend	（時間を）過ごす、（お金を）使う
+4	word	うごき	stay	滞在する
+4	word	うごき	travel	旅行する
+4	word	うごき	turn	曲がる、回す
+4	word	うごき	win	勝つ
+4	word	うごき	understand	理解する
+4	word	うごき	decide	決める
+4	word	うごき	invite	招待する
+4	word	うごき	hurry	急ぐ
+4	word	うごき	climb	登る
+4	word	うごき	cry	泣く
+4	word	うごき	fall	落ちる
+4	word	うごき	hold	持つ、（会を）開く
+4	word	うごき	move	動く、引っ越す
+4	word	うごき	return	もどる、返す
+4	word	うごき	receive	受け取る
+4	word	うごき	try	やってみる
+4	word	うごき	worry	心配する
+4	word	うごき	hate	大きらいだ
+4	word	うごき	prepare	準備する
+4	word	うごき	relax	くつろぐ
+4	word	うごき	wonder	〜かなと思う
+4	word	うごき	check	確かめる
+4	word	うごき	cross	渡る、横切る
+4	word	うごき	enter	入る
+4	word	うごき	follow	ついていく
+4	word	うごき	throw	投げる
+4	word	うごき	count	数える
+4	word	うごき	bake	（オーブンで）焼く
+4	word	うごき	boil	ゆでる、わかす
+4	word	うごき	mix	混ぜる
+4	word	うごき	repair	修理する
+4	word	うごき	greet	あいさつする
+4	word	うごき	thank	感謝する
+4	word	うごき	solve	解く、解決する
+4	word	うごき	seem	〜のように見える
+4	word	うごき	sound	〜に聞こえる
+4	word	ことば	about	〜について
+4	word	ことば	above	〜の上の方に
+4	word	ことば	across	〜を横切って
+4	word	ことば	along	〜に沿って
+4	word	ことば	around	〜のまわりに
+4	word	ことば	behind	〜の後ろに
+4	word	ことば	below	〜より下に
+4	word	ことば	beside	〜のそばに
+4	word	ことば	between	（2つ）の間に
+4	word	ことば	by	〜のそばに、〜によって
+4	word	ことば	for	〜のために
+4	word	ことば	into	〜の中へ
+4	word	ことば	of	〜の
+4	word	ことば	over	〜の上に、〜をこえて
+4	word	ことば	through	〜を通りぬけて
+4	word	ことば	to	〜へ
+4	word	ことば	during	〜の間ずっと
+4	word	ことば	without	〜なしで
+4	word	ことば	among	（3つ以上）の中で
+4	word	ことば	than	〜よりも
+4	word	ことば	almost	ほとんど
+4	word	ことば	also	〜もまた
+4	word	ことば	already	すでに
+4	word	ことば	alone	ひとりで
+4	word	ことば	away	はなれて
+4	word	ことば	back	もとへ、うしろへ
+4	word	ことば	both	両方
+4	word	ことば	carefully	注意深く
+4	word	ことば	down	下へ
+4	word	ことば	up	上へ
+4	word	ことば	out	外へ
+4	word	ことば	outside	外で
+4	word	ことば	inside	中で
+4	word	ことば	everywhere	どこでも
+4	word	ことば	just	ちょうど
+4	word	ことば	maybe	たぶん
+4	word	ことば	probably	おそらく
+4	word	ことば	never	決して〜ない
+4	word	ことば	only	〜だけ
+4	word	ことば	once	一度、かつて
+4	word	ことば	quickly	すばやく
+4	word	ことば	really	本当に
+4	word	ことば	sometimes	ときどき
+4	word	ことば	straight	まっすぐに
+4	word	ことば	then	そのとき、それから
+4	word	ことば	well	上手に
+4	word	ことば	yet	（否定文で）まだ
+4	word	ことば	still	まだ、今でも
+4	word	ことば	ever	今までに
+4	word	ことば	even	〜でさえ
+4	word	ことば	enough	十分に
+4	word	ことば	far	遠くに
+4	word	ことば	next	次に
+4	word	ことば	finally	ついに
+4	word	ことば	easily	かんたんに
+4	word	ことば	slowly	ゆっくりと
+4	word	ことば	happily	幸せに
+4	word	かいわ	all right	だいじょうぶな
+4	word	かいわ	pardon	（聞き返して）もう一度言ってください
+4	word	かいわ	hey	ねえ、おい
+4	phrase	かず	a piece of ～	１つの～	Can I have [[a piece of]] cake?	ケーキを[[1切れ]]もらえる？
+4	phrase	じかん	on time	時間通りに	The bus came [[on time]].	バスは[[時間通りに]]来た。
+4	phrase	きもち	be afraid of ～	～をこわがる	My sister [[is afraid of]] dogs.	妹は犬を[[こわがっている]]。
+4	phrase	いろ・ようす	be different from ～	～とちがっている	My bag [[is different from]] yours.	私のかばんはきみのと[[ちがう]]。
+4	phrase	うごき	look for ～	～をさがす	I'm [[looking for]] my key.	私はかぎを[[さがしている]]。
+4	phrase	うごき	hear from ～	～から便りがある	I [[heard from]] my aunt yesterday.	きのう、おばから[[便りがあった]]。
+4	phrase	うごき	grow up	大人になる、育つ	I want to be a doctor when I [[grow up]].	[[大人になったら]]医者になりたい。
+4	phrase	うごき	put on ～	～を身につける	[[Put on]] your coat. It's cold.	コートを[[着なさい]]。寒いよ。
+4	phrase	うごき	try on ～	～を試着する	Can I [[try on]] this shirt?	このシャツを[[試着して]]もいいですか。
+4	phrase	うごき	turn on ～	（スイッチなど）をつける	Please [[turn on]] the light.	電気を[[つけて]]ください。
+4	phrase	うごき	turn off ～	（スイッチなど）を消す	[[Turn off]] the TV, please.	テレビを[[消して]]ください。
+4	phrase	うごき	take off ～	～をぬぐ	Please [[take off]] your shoes here.	ここでくつを[[ぬいで]]ください。
+4	phrase	がっこう	make a mistake	まちがいをする	Don't worry if you [[make a mistake]].	[[まちがえても]]心配しないで。
+4	phrase	きもち	do one's best	最善をつくす	I will [[do my best]] in the game.	試合で[[ベストをつくす]]よ。
+4	phrase	きもち	enjoy oneself	楽しい時を過ごす	We [[enjoyed ourselves]] at the party.	私たちはパーティーで[[楽しく過ごした]]。
+4	phrase	うごき	take care of ～	～の世話をする	I [[take care of]] my dog every day.	私は毎日、犬の[[世話をする]]。
+4	phrase	きもち	look forward to ～	～を楽しみに待つ	I'm [[looking forward to]] the trip.	私は旅行を[[楽しみにしている]]。
+4	phrase	かいわ	by the way	ところで	[[By the way]], where is Tom?	[[ところで]]、トムはどこ？
+4	phrase	ことば	for example	たとえば	I like fruit, [[for example]], apples.	私はくだもの、[[たとえば]]りんごが好き。
+4	phrase	じかん	in the future	将来は	I want to live abroad [[in the future]].	[[将来は]]外国に住みたい。
+4	phrase	かぞく・ひと	each other	おたがい	They help [[each other]].	彼らは[[おたがいに]]助け合う。
+4	phrase	じかん	at first	最初は	[[At first]], I didn't like natto.	[[最初は]]、納豆が好きじゃなかった。
+4	phrase	じかん	for the first time	初めて	I saw snow [[for the first time]].	私は[[初めて]]雪を見た。
+4	phrase	ばしょ	on the way (to ～)	（～への）途中で	I met Ken [[on the way to]] school.	学校へ行く[[途中で]]ケンに会った。
+4	phrase	うごき	take a seat	すわる、席につく	Please [[take a seat]].	どうぞ[[おかけ]]ください。
+4	phrase	かぞく・ひと	shake hands	握手する	They [[shook hands]] after the game.	彼らは試合のあと[[握手した]]。
+4	phrase	かぞく・ひと	make friends with ～	～と友だちになる	I [[made friends with]] a new student.	私は転校生と[[友だちになった]]。
+4	phrase	きもち	be busy with ～	～でいそがしい	She [[is busy with]] her homework.	彼女は宿題[[でいそがしい]]。
+4	phrase	うごき	have a look at ～	～を見る	Let me [[have a look at]] your picture.	きみの絵を[[見せて]]。
+4	phrase	うごき	get on ～	（乗り物）に乗る	We [[got on]] the train at Tokyo.	私たちは東京で電車に[[乗った]]。
+4	phrase	うごき	get off ～	（乗り物）を降りる	[[Get off]] the bus at the next stop.	次のバス停でバスを[[降りて]]。
+4	phrase	うごき	wait for ～	～を待つ	I'm [[waiting for]] my mother.	私は母を[[待っている]]。
+4	phrase	いろ・ようす	look like ～	～のように見える	That cloud [[looks like]] a fish.	あの雲は魚の[[ように見える]]。
+4	phrase	きもち	be good at ～	～が得意だ	Ken [[is good at]] soccer.	ケンはサッカーが[[得意だ]]。
+4	phrase	うごき	come back	もどってくる	Please [[come back]] by five.	5時までに[[もどってきて]]。
+4	phrase	あそび・スポーツ	have a good time	楽しく過ごすWe [[had a good time]] at the beach.	私たちは浜辺で[[楽しく過ごした]]。
+4	phrase	うごき	talk with ～	～と話す	I [[talked with]] my teacher after class.	授業のあと先生[[と話した]]。
+4	phrase	うごき	arrive at ～	～に着く	We [[arrived at]] the station at noon.	私たちは正午に駅[[に着いた]]。
+4	phrase	じかん	all day	一日中	It rained [[all day]].	[[一日中]]雨がふった。
+4	idiom	かいわ	What ～ like?	～はどんなようす？	"[[What is it like?]]" "It's big and red."	「[[それってどんな感じ？]]」「大きくて赤いよ。」
+4	idiom	かいわ	Take it easy.	気楽にね。	"I'm nervous about the test." "[[Take it easy.]]"	「テストが心配だよ。」「[[気楽にね。]]」
+4	idiom	かいわ	My pleasure.	どういたしまして（喜んで）。	"Thanks for your help." "[[My pleasure.]]"	「手伝ってくれてありがとう。」「[[どういたしまして。]]」
+4	idiom	かいわ	Here we are.	さあ、着いた。	"[[Here we are.]] This is the zoo."	「[[さあ、着いたよ。]]ここが動物園だ。」
+4	idiom	かいわ	Go ahead.	どうぞ。	"Can I use your pen?" "Sure. [[Go ahead.]]"	「ペンを使ってもいい？」「いいよ。[[どうぞ。]]」
+4	idiom	かいわ	Can I help you?	いらっしゃいませ（お手伝いしましょうか）。	"[[Can I help you?]]" "I'm looking for a cap."	「[[いらっしゃいませ。]]」「ぼうしをさがしています。」
+4	idiom	かいわ	I'd like ～.	～がほしいのですが。	"[[I'd like]] a hamburger, please."	「ハンバーガーを[[ください]]。」
+4	idiom	かいわ	How about ～?	～はどう？	"[[How about]] going to the park?"	「公園に行くのは[[どう？]]」
+4	idiom	かいわ	That's too bad.	それはお気の毒に。	"I have a cold." "[[That's too bad.]]"	「かぜをひいたんだ。」「[[それはお気の毒に。]]」
+4	idiom	かいわ	No problem.	問題ないよ。	"Can you help me?" "[[No problem.]]"	「手伝ってくれる？」「[[問題ないよ。]]」
+4	idiom	かいわ	Don't worry.	心配しないで。	"I lost my pen." "[[Don't worry.]] Use mine."	「ペンをなくしちゃった。」「[[心配しないで。]]ぼくのを使って。」
+4	idiom	かいわ	What's wrong?	どうしたの？	"[[What's wrong?]]" "I have a headache."	「[[どうしたの？]]」「頭が痛いんだ。」
+4	idiom	かいわ	Have a nice day.	よい一日を。	"See you later." "[[Have a nice day.]]"	「またあとでね。」「[[よい一日を。]]」
+4	idiom	かいわ	Long time no see.	久しぶり。	"Hi, Ken! [[Long time no see.]]"	「やあ、ケン！[[久しぶり。]]」
+4	idiom	かいわ	Why don't we ～?	～しませんか。	"[[Why don't we]] have lunch together?"	「いっしょにお昼を[[食べませんか。]]」
+4	idiom	かいわ	Sure.	もちろん、いいよ。	"Can I sit here?" "[[Sure.]]"	「ここにすわってもいい？」「[[いいよ。]]」
+4	idiom	かいわ	Hold on.	（電話で）少々お待ちください。	"Is Emi there?" "[[Hold on]], please."	「エミはいますか。」「[[少々お待ち]]ください。」
+4	idiom	かいわ	Speaking.	（電話で）私です。	"Can I speak to Ken?" "[[Speaking.]]"	「ケンをお願いします。」「[[ぼくです。]]」
+4	idiom	かいわ	Congratulations!	おめでとう！	"I won the contest!" "[[Congratulations!]]"	「コンテストで優勝したよ！」「[[おめでとう！]]」

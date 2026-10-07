@@ -34,6 +34,13 @@ lines.forEach((line, i) => {
   if (exJa && mark(exJa) !== 1) errors.push(`${n}行：日本語の例文に [[ ]] がちょうど1つ必要`);
   rows.push({ level, type, theme, en, ja, exEn, exJa });
 });
+// ほかの級の TSV と英語が重なっていないか（同じ語を2つの級で出さない）
+for (const other of LEVELS.filter((x) => x !== lv)) {
+  const f = path.join(dir, `vocab_${other}.tsv`);
+  if (!fs.existsSync(f)) continue;
+  const ens = new Set(fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n').split('\n').slice(1).map((l) => (l.split('\t')[3] || '').trim().toLowerCase()).filter(Boolean));
+  rows.forEach((r) => { if (ens.has(r.en.toLowerCase())) warns.push(`${other}級にも同じ英語があります：${r.en}`); });
+}
 warns.forEach((w) => console.warn('注意 ' + w));
 if (errors.length) { errors.forEach((e) => console.error('エラー ' + e)); process.exit(1); }
 
@@ -43,9 +50,7 @@ const sql = `-- ${lv === 'p2' ? '準2' : lv === 'p1' ? '準1' : lv}級の語彙�
 -- 単語の選定は CEFR-J Wordlist Version 1.6（東京外国語大学投野由紀夫研究室）を元にしている。
 -- Supabase の SQL Editor で実行する。同じ (level, en) があれば内容を上書きし、id は変えない（記録を壊さない）。
 begin;
--- 動作確認用のサンプル（id 1〜101）は使わない。同じ語は下の insert で有効に戻る
-update public.vocab_items set active = false where id between 1 and 101;
-insert into public.vocab_items (level, en, ja, type, theme, example_en, example_ja, active) values
+${lv === '5' ? '-- 動作確認用のサンプル（id 1〜101）は使わない。同じ語は下の insert で有効に戻る（この処理は5級の SQL だけに入れる）\nupdate public.vocab_items set active = false where id between 1 and 101;\n' : ''}insert into public.vocab_items (level, en, ja, type, theme, example_en, example_ja, active) values
 ${values}
 on conflict (level, en) do update set
   ja = excluded.ja, type = excluded.type, theme = excluded.theme,
