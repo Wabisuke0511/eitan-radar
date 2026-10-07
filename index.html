@@ -244,9 +244,9 @@
 // anon キーは公開前提のキー（RLS で守る）。service_role は絶対にここへ書かない。
 const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
-const FEATURES = { ai:false, report:false, line:false };
+const FEATURES = { ai:false, report:true, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v7', APP_DATE = '2026-10-08';
+const APP_VERSION = 'v8', APP_DATE = '2026-10-08';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -758,7 +758,28 @@ function reportCard(){
     <div class="sub" style="margin-top:2px">直近7日：${tw.days}日学習・${tw.n}問・${Math.round(tw.sec/60)}分</div></button>`;
 }
 const okMail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-function openReport(){ if(!FEATURES.report) return; document.getElementById('rep').classList.add('open'); renderReport(); document.getElementById('rep').scrollTop=0; }
+// 週間レポートの設定（report_settings）と最近の送信（report_logs）を読む
+async function loadReport(){
+  if(!sb || !CHILD) return;
+  const [s, l] = await Promise.all([
+    sb.from('report_settings').select('enabled,email,email_enabled,line_enabled,dow,hour').eq('child_id',CHILD.id).maybeSingle(),
+    sb.from('report_logs').select('kind,channel,status,created_at').eq('child_id',CHILD.id).order('created_at',{ascending:false}).limit(5)
+  ]);
+  if(s.error) throw s.error;
+  const R = repDef();
+  if(s.data) Object.assign(R, { exists:true, on:s.data.enabled, email:s.data.email||'', dow:s.data.dow, hour:s.data.hour, ch:{ mail:s.data.email_enabled, line:!!(FEATURES.line && s.data.line_enabled) } });
+  R.log = (l.data||[]).map(x=>({ t:new Date(x.created_at).getTime(), kind:x.kind==='auto'?'自動':'手動', to:(x.channel==='email'?'メール':'LINE')+(x.status==='sent'?'':'（失敗）') }));
+  S.report = R;
+}
+async function openReport(){
+  if(!FEATURES.report) return;
+  const el = document.getElementById('rep'); el.classList.add('open'); el.scrollTop = 0;
+  el.innerHTML = `<div class="qtop"><button class="qx" aria-label="もどる" onclick="closeReport()">‹</button><b style="font-size:17px">週間レポート</b></div><div class="empty">よみこみ中…</div>`;
+  let err = false;
+  try{ if(!isOffline()) await loadReport(); else err = true; }catch(e){ console.error(e); err = true; }
+  renderReport();
+  if(err) setRmsg('設定を読みこめませんでした（オフラインか通信エラー）。つながってから開き直してください', false);
+}
 function closeReport(){ document.getElementById('rep').classList.remove('open'); render(); }
 function setRdow(v){ S.report.dow=+v; save(); renderReport(); }
 function setRhour(v){ S.report.hour=+v; save(); }
@@ -773,22 +794,41 @@ function togCh(k){
 }
 function toggleLine(){ S.report.lineLinked=!S.report.lineLinked; save(); renderReport(); }
 function destText(R){ const a=[]; if(R.ch.mail) a.push(R.email?esc(R.email):'メール（未入力）'); if(R.ch.line) a.push('LINE'+(R.lineLinked?'':'（未連携）')); return a.join('・'); }
-function saveReport(){
+// 設定を report_settings に保存（クライアントが書ける列だけ。line_user_id / last_sent_at は触らない）
+async function saveReport(silent){
   const R=S.report, v=readMail();
-  if(!R.ch.mail && !R.ch.line){ setRmsg('おくり先を1つ以上えらんでください',false); return; }
-  if(R.ch.mail && !okMail(v)){ setRmsg('メールアドレスの形式を確認してください',false); return; }
+  if(!R.ch.mail && !R.ch.line){ setRmsg('おくり先を1つ以上えらんでください',false); return false; }
+  if(R.ch.mail && !okMail(v)){ setRmsg('メールアドレスの形式を確認してください',false); return false; }
   if(R.ch.mail) R.email=v;
-  save(); renderReport(); setRmsg('保存しました。（モックなので、実際には送られません）',true);
+  if(isOffline()){ setRmsg('オフラインのため保存できません。つながってから、もう一度おしてください',false); return false; }
+  const row = { enabled:!!R.on, email:R.email||null, email_enabled:!!R.ch.mail, line_enabled:!!R.ch.line, dow:R.dow, hour:R.hour };
+  const res = R.exists
+    ? await sb.from('report_settings').update({ ...row, updated_at:new Date().toISOString() }).eq('child_id', CHILD.id)
+    : await sb.from('report_settings').insert({ child_id:CHILD.id, ...row });
+  if(res.error){ console.error(res.error); setRmsg('保存できませんでした。もう一度ためしてください',false); return false; }
+  R.exists = true;
+  if(!silent){ renderReport(); setRmsg('保存しました',true); }
+  return true;
 }
-function sendNow(){
-  const R=S.report, v=readMail(), to=[];
-  if(R.ch.mail){ if(!okMail(v)){ setRmsg('メールアドレスの形式を確認してください',false); return; } to.push('メール'); }
-  if(R.ch.line){ if(!R.lineLinked){ setRmsg('LINEがまだ連携されていません',false); return; } to.push('LINE'); }
-  if(!to.length){ setRmsg('おくり先を1つ以上えらんでください',false); return; }
-  if(R.ch.mail) R.email=v;
-  R.log = [{t:Date.now(), kind:'手動', to:to.join('・')}, ...(R.log||[])].slice(0,5);
-  save(); renderReport();
-  setRmsg('送信しました（モック）。本番では '+to.join('・')+' に、下のプレビューの内容が届きます。',true);
+// 「今すぐ送信」：先に設定を保存してから Edge Function（send-weekly-report）を呼ぶ
+async function sendNow(){
+  if(UI.sending) return;
+  if(!(await saveReport(true))) return;
+  UI.sending = true; setRmsg('送信しています…', true);
+  try{
+    const { data, error } = await sb.functions.invoke('send-weekly-report', { body:{ child_id:CHILD.id } });
+    if(error){ let code = ''; try{ code = (await error.context.json()).error || ''; }catch(e){} throw Object.assign(new Error(code || error.message), { code }); }
+    const r = (data && data.results && data.results.results) || [];
+    try{ await loadReport(); }catch(e){}
+    renderReport();
+    if(!r.length) setRmsg('おくり先が設定されていません', false);
+    else if(r.every(x=>x.status==='sent')) setRmsg('送信しました。メールを確認してください（届くまで数分かかることがあります）', true);
+    else setRmsg('送信できませんでした：' + String((r.find(x=>x.status!=='sent')||{}).error||'').slice(0,120), false);
+  }catch(e){
+    console.error(e);
+    setRmsg(e.code==='rate_limited' ? '今日はもう送信できません（1日3回まで）' : '送信できませんでした。通信を確かめて、もう一度ためしてください', false);
+  }
+  UI.sending = false;
 }
 function diffTag(v,unit){
   if(v===null) return '<em class="flat">先週データなし</em>';
@@ -842,7 +882,7 @@ function renderReport(){
     return `<div class="pbar"><div class="n">${MODES[m]}</div><div class="bar"><i style="width:${a===null?0:a*100}%;background:hsl(${a===null?0:4+a*126} 70% 50%)"></i></div><div class="v">${a===null?'–':pct(a)+'%'}</div></div>`; }).join('');
   const lvLine = d.cur===null ? '🏆 ぜんぶの級をクリアしました！' : (()=>{ const x=lvStat(d.cur); return `🚩 いまの級：<b>${LVN[d.cur]}</b>（正答率 ${Math.floor(x.acc*100)}% ／ クリアは90%）`; })();
   const a = UI.rai; let ai;
-  if(!SAMPLE) ai = `<p class="sub">AIコメントはClaudeの中で開いたときに使えます。（本番ではサーバー側で作成してメールに載せます）</p>`;
+  if(!SAMPLE) ai = `<p class="sub">コーチのコメントは、AI分析を有効にすると、送るメールに付きます（準備中）。</p>`;
   else if(a && a.status==='loading') ai = `<p class="sub">コメントを作っています…（10〜60秒）</p>`;
   else if(a && a.status==='done'){ const r=a.data||{}; ai = `<p style="margin:0">${esc(r.comment||'')}</p><p style="margin:8px 0 0"><b>来週の目標：</b>${esc(r.goal||'')}</p>
     ${r.kid?`<div class="kidmsg">💬 ${esc(r.kid)}</div>`:''}<div style="height:10px"></div><button class="btn btn-sub" style="min-height:44px;padding:8px" onclick="runRepAI()">作りなおす</button>`; }
@@ -852,10 +892,11 @@ function renderReport(){
     <div class="repbox" style="margin-top:6px"><h3>📬 毎週メールでお届け</h3>
       <p class="sub">保護者のメールアドレスに、1週間の学習のようすを自動で送ります。</p>
       <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:700"><input type="checkbox" ${R.on?'checked':''} onchange="setRon(this.checked)" style="width:20px;height:20px"> 毎週おくる</label>
-      <label class="lbl">おくり先（両方もOK）</label>
-      <div class="chips"><button class="chip ${R.ch.mail?'on':''}" onclick="togCh('mail')">✉️ メール</button><button class="chip ${R.ch.line?'on':''}" onclick="togCh('line')">💬 LINE</button></div>
+      ${FEATURES.line ? `<label class="lbl">おくり先（両方もOK）</label>
+      <div class="chips"><button class="chip ${R.ch.mail?'on':''}" onclick="togCh('mail')">✉️ メール</button><button class="chip ${R.ch.line?'on':''}" onclick="togCh('line')">💬 LINE</button></div>` : ''}
       ${R.ch.mail?`<label class="lbl" for="rmail">メールアドレス</label>
-      <input id="rmail" class="fld" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="parent@example.com" value="${esc(draft||'')}">`:''}
+      <input id="rmail" class="fld" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="parent@example.com" value="${esc(draft||'')}">
+      <p class="sub" style="margin-top:6px;font-size:12px">※ いまは試験運用中のため、メール配信サービス（Resend）に登録したアドレスにだけ届きます。</p>`:''}
       ${R.ch.line?`<label class="lbl">LINEの連携</label>
       <div class="subj" style="line-height:1.8"><b>連携の手順（本番）</b><br>① 公式アカウントを友だち追加<br>② 下の連携コードをトークで送信<br>③ 「連携しました」と返信が届けば完了</div>
       <div style="display:flex;align-items:center;gap:12px;margin-top:10px"><span style="font-size:28px;font-weight:800;letter-spacing:.18em;font-variant-numeric:tabular-nums">${R.lineCode}</span><span class="sub">連携コード（本番では短時間で失効）</span></div>
@@ -866,7 +907,7 @@ function renderReport(){
       <div style="height:14px"></div>
       <div class="row2"><button class="btn btn-main" onclick="saveReport()">保存</button><button class="btn btn-sub" onclick="sendNow()">📨 今すぐ送信</button></div>
       <div class="need" id="rmsg" style="margin-top:10px">${(R.ch.mail&&R.email)||(R.ch.line&&R.lineLinked)?`毎週 ${DOW[R.dow]}曜 ${R.hour}:00 に ${destText(R)} へ${R.on?'送ります':'（いまは停止中）'}`:'おくり先を設定して保存してください'}</div>
-      ${(R.log&&R.log.length)?`<div class="lbl" style="margin-top:12px">最近の送信（モック）</div>${R.log.map(x=>{const t=new Date(x.t);return `<div class="sub">${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}　${x.kind}　${esc(x.to)}</div>`;}).join('')}`:''}
+      ${(R.log&&R.log.length)?`<div class="lbl" style="margin-top:12px">最近の送信</div>${R.log.map(x=>{const t=new Date(x.t);return `<div class="sub">${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}　${x.kind}　${esc(x.to)}</div>`;}).join('')}`:''}
     </div>
     <h2 id="rprev">メールのイメージ</h2>
     <div class="subj">件名：【えいたんレーダー】今週の学習レポート（${d.period}）</div>
@@ -1203,6 +1244,7 @@ async function startApp(user){
     CHILD = r.data[0]; loadPending();
     await loadVocab();
     await refreshData();
+    if(FEATURES.report){ try{ await loadReport(); }catch(e){ console.error('report settings', e); } }
   }catch(e){
     console.error(e);
     if(offlineStart(user.id)) return;

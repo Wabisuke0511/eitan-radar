@@ -1,6 +1,6 @@
 // network-first の Service Worker。
 // ★ push のたびに CACHE_VERSION を必ず上げること（iOS PWA で古いキャッシュが残る問題の対策）。
-const CACHE_VERSION = 'eitan-v7';
+const CACHE_VERSION = 'eitan-v8';
 const CORE = ['./', './index.html', './manifest.json'];
 // オフラインでも開けるよう、Supabase JS（CDN）だけは同じ方式で保存する。Supabase の API はキャッシュしない
 const LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
