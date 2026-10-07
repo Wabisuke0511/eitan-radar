@@ -198,6 +198,11 @@
   .ch[disabled] { cursor:default; }
   .inp { width:100%; font:inherit; font-size:22px; font-weight:700; padding:14px 16px; border-radius:16px; border:2px solid var(--line);
     background:var(--surface); color:var(--ink); margin-bottom:10px; }
+  .qcard .qex { font-size:21px; font-weight:700; line-height:1.55; overflow-wrap:anywhere; }
+  .qcard .qex b { color:var(--primary); }
+  .qcard .qexj { font-size:14px; color:var(--ink2); margin-top:8px; }
+  .exb { margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:15px; }
+  .exb b { color:var(--primary); }
   .tiles { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:0 0 14px; }
   .tile { min-width:44px; min-height:48px; padding:6px 12px; border-radius:12px; font-size:20px; font-weight:800; line-height:1.2;
     background:var(--surface); border:2px solid var(--line); color:var(--ink); }
@@ -241,12 +246,12 @@ const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:false, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v4', APP_DATE = '2026-10-06';
+const APP_VERSION = 'v5', APP_DATE = '2026-10-07';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
 const TYPES = { word:'単語', phrase:'熟語', idiom:'イディオム' };
-const THEME_ORDER = ['たべもの','どうぶつ','がっこう','ばしょ','いろ・ようす','うごき','きもち','かいわ'];
+const THEME_ORDER = ['たべもの','どうぶつ','かぞく・ひと','からだ','がっこう','ばしょ','もの','あそび・スポーツ','しぜん・てんき','じかん','かず','いろ・ようす','きもち','うごき','ことば','かいわ'];
 let THEMES = [];   // vocab_items の theme から起動時に作る
 // 級の順番（下から上へ進む）。内部は数値：25=準2級(p2), 15=準1級(p1)
 const LVORD = [5,4,3,25,2,15];
@@ -440,7 +445,8 @@ function vBook(){
   <div style="height:12px"></div>${seg(LVSEG, UI.wlv, 'setWlv')}
   <div style="height:8px"></div>${seg([['all','ぜんぶ'],...Object.entries(TYPES)], UI.wtype, 'setWtype')}
   <div style="height:12px"></div>
-  <div class="list">${list.map(d=>wordRow(d,`openWord(${d.id})`)).join('')}</div>`;
+  <div class="list">${list.map(d=>wordRow(d,`openWord(${d.id})`)).join('') || '<div class="empty">この級の単語は じゅんび中です</div>'}</div>
+  <p class="sub" style="margin-top:16px;font-size:11px">単語の選定は『CEFR-J Wordlist Version 1.6』東京外国語大学投野由紀夫研究室（2026年10月ダウンロード）を元にしています。</p>`;
 }
 function setWlv(v){ UI.wlv=v; render(); }
 function setWtype(v){ UI.wtype=v; render(); }
@@ -500,11 +506,17 @@ function wpick(arr, wf){
   const w = arr.map(wf), tot = w.reduce((a,b)=>a+b,0); let r = Math.random()*tot;
   for(let i=0;i<arr.length;i++){ r-=w[i]; if(r<=0) return i; } return arr.length-1;
 }
+// 例文（[[ ]] で囲んだ部分が覚える語句）。熟語・会話表現にだけある
+const exSpan = d => { const m = (d.ex||'').match(/\[\[(.+?)\]\]/); return m ? m[1] : null; };
+const exHtml = (s, blank) => esc(s||'').replace(/\[\[(.+?)\]\]/, (_,x)=> blank ? x.split(' ').map(()=>'＿＿').join(' ') : `<b>${x}</b>`);
+// スペル（並び替え）に出せるか：例文があれば例文の語句、なければ英語表記で判定
+const canSpell = d => { const t = exSpan(d) || d.en; return t.length<=24 && !/[～〜]/.test(t); };
 function pickMode(d){
-  const ms = Object.keys(MODES).filter(m => m!=='spell' || d.en.length<=24);
+  const ms = Object.keys(MODES).filter(m => m!=='spell' || canSpell(d));
   return ms[wpick(ms, m=>{ const x=st(d.id,m); return x.s ? (1-x.c/x.s)+.25 : .6; })];
 }
 function startQuiz(pool, o){
+  if(!pool.length) return;
   let rest = [...pool], picked = [];
   const n = Math.min(o.n, rest.length);
   while(picked.length<n){
@@ -513,7 +525,7 @@ function startQuiz(pool, o){
   }
   const qs = picked.map(d=>{
     let mode = o.mode==='mix' ? pickMode(d) : o.mode;
-    if(mode==='spell' && d.en.length>24) mode='en2ja';
+    if(mode==='spell' && !canSpell(d)) mode='en2ja';
     const q = {d,mode};
     if(mode==='spell'){ q.sp = mkTiles(d); q.placed = []; }
     if(mode!=='spell'){
@@ -533,16 +545,17 @@ function closeQuiz(){
   document.getElementById('quiz').classList.remove('open'); try{speechSynthesis.cancel();}catch(e){} Q=null; render();
 }
 
-// スペルは並び替え：1語は文字タイル、2語以上（熟語・イディオム）は単語タイル
+// スペルは並び替え：1語は文字タイル、2語以上（熟語・イディオム）は単語タイル。例文があれば例文の語句（活用形）を並べる
 function mkTiles(d){
-  const words = d.en.split(' ').filter(Boolean), unit = words.length>1 ? 'word' : 'char';
-  const parts = unit==='word' ? words : d.en.split('').filter(c=>/[A-Za-z0-9]/.test(c));
+  const target = exSpan(d) || d.en;
+  const words = target.split(' ').filter(Boolean), unit = words.length>1 ? 'word' : 'char';
+  const parts = unit==='word' ? words : target.split('').filter(c=>/[A-Za-z0-9]/.test(c));
   let order = parts.map((_,i)=>i);
   for(let t=0; t<10; t++){
     order.sort(()=>Math.random()-.5);
     if(parts.length<2 || order.some((v,i)=>parts[v]!==parts[i])) break;   // 元の並びのままにしない
   }
-  return { unit, parts, order };
+  return { unit, parts, order, target };
 }
 function place(i){ const q = Q.qs[Q.i]; if(Q.ans!==null || q.placed.includes(i)) return; q.placed.push(i); renderQ(true); }
 function unplace(k){ const q = Q.qs[Q.i]; if(Q.ans!==null) return; q.placed.splice(k,1); renderQ(true); }
@@ -569,12 +582,23 @@ function renderQ(keepScroll){
   const top = `<div class="qtop"><button class="qx" aria-label="やめる" onclick="closeQuiz()">✕</button>
     <div class="qprog"><i style="width:${Q.i/Q.qs.length*100}%"></i></div><div class="qn">${Q.i+1}/${Q.qs.length}</div></div>`;
   let body = '';
-  if(q.mode==='en2ja') body = `<div class="qmode">この英語の意味は？</div>
+  const hasEx = !!(d.ex && d.exj);
+  if(q.mode==='en2ja') body = hasEx
+    ? `<div class="qmode">太字の英語の意味は？</div>
+    <div class="qcard"><div class="qex">${exHtml(d.ex)}</div><button class="qplay s" aria-label="発音" onclick="speakId(${d.id})">🔊</button></div>${choiceHtml(q)}`
+    : `<div class="qmode">この英語の意味は？</div>
     <div class="qcard"><div class="q">${esc(d.en)}</div><button class="qplay s" aria-label="発音" onclick="speakId(${d.id})">🔊</button></div>${choiceHtml(q)}`;
-  if(q.mode==='ja2en') body = `<div class="qmode">英語でいうと？</div>
+  if(q.mode==='ja2en') body = hasEx
+    ? `<div class="qmode">太字のところを英語でいうと？</div>
+    <div class="qcard"><div class="qex">${exHtml(d.exj)}</div></div>${choiceHtml(q)}`
+    : `<div class="qmode">英語でいうと？</div>
     <div class="qcard"><div class="qj">${esc(d.ja)}</div></div>${choiceHtml(q)}`;
   if(q.mode==='spell'){
-    body = `<div class="qmode">${q.sp.unit==='word'?'ことばを ならべよう':'つづりを ならべよう'}</div>
+    body = hasEx
+    ? `<div class="qmode">空らんに ことばを ならべよう</div>
+    <div class="qcard"><div class="qex">${exHtml(d.ex, true)}</div><div class="qexj">${exHtml(d.exj)}</div></div>
+    ${tilesHtml(q)}`
+    : `<div class="qmode">${q.sp.unit==='word'?'ことばを ならべよう':'つづりを ならべよう'}</div>
     <div class="qcard"><div class="qj">${esc(d.ja)}</div><button class="qplay s" aria-label="発音" onclick="speakId(${d.id})">🔊</button></div>
     ${tilesHtml(q)}`;
   }
@@ -583,7 +607,8 @@ function renderQ(keepScroll){
     const ok = Q.ans.ok;
     fb = `<div class="fb ${ok?'ok':'ng'}"><div class="t">${ok?'せいかい！':'おしい！ こたえは…'}</div>
       <div class="a">${esc(d.en)}</div><div>${esc(d.ja)}</div>
-      ${!ok && q.mode==='spell' ? `<div class="sub" style="margin-top:6px">あなたの答え：${esc(Q.ans.val||'（空）')}</div>`:''}</div>
+      ${!ok && q.mode==='spell' ? `<div class="sub" style="margin-top:6px">あなたの答え：${esc(Q.ans.val||'（空）')}</div>`:''}
+      ${hasEx ? `<div class="exb"><div>${exHtml(d.ex)}</div><div class="sub">${exHtml(d.exj)}</div></div>` : ''}</div>
       <div class="row2"><button class="btn btn-sub" onclick="speakId(${d.id})">🔊 きく</button>
       <button class="btn btn-main" onclick="nextQ()">${Q.i+1>=Q.qs.length?'けっかを見る':'つぎへ'}</button></div>`;
   }
@@ -613,7 +638,7 @@ function submitSpell(){
   const q = Q.qs[Q.i];
   if(q.placed.length < q.sp.parts.length) return;
   const val = q.placed.map(i=>q.sp.parts[i]).join(q.sp.unit==='word' ? ' ' : '');
-  const ok = norm(val)===norm(q.d.en);
+  const ok = norm(val)===norm(q.sp.target);
   Q.ans = {ok, val}; record(q.d, 'spell', ok); renderQ();
 }
 function nextQ(){ Q.i++; Q.ans=null; renderQ(); }
@@ -663,7 +688,9 @@ function startLevel(l){ const pool = D.filter(d=>d.lv===l); startQuiz(pool,{mode
 function startStage(l,t){ const pool = D.filter(d=>d.lv===l && d.theme===t); startQuiz(pool,{mode:'mix',n:Math.min(10,pool.length),prio:'weak'}); }
 function levelCard(l, cur){
   const x = lvStat(l), done = !!(S.cleared&&S.cleared[l]), open = isOpen(l), isCur = l===cur;
-  const meta = `<div class="ttl"><b>${LVN[l]}</b><span>${LVDESC[l]}・サンプル${x.n}語</span></div>`;
+  const meta = `<div class="ttl"><b>${LVN[l]}</b><span>${LVDESC[l]}・${x.n ? x.n+'語' : 'じゅんび中'}</span></div>`;
+  if(!x.n && !done) return `<div class="rc ${isOpen(l)?'':'lock'}" style="--c:var(--lv${l})">${meta}
+    <div class="need" style="margin:6px 0 0">この級の単語は じゅんび中です</div></div>`;
   if(done) return `<div class="rc" style="--c:var(--lv${l})">${meta}
     <div class="gl" style="margin-top:6px"><span>クリア済み ✓</span><span>正答率 ${Math.floor(x.acc*100)}%</span></div>
     <button class="btn btn-sub" style="min-height:44px;padding:8px" onclick="startLevel(${l})">ふくしゅうする</button>${missBtn(l)}</div>`;
@@ -975,8 +1002,8 @@ async function fetchAll(build){
   return out;
 }
 async function loadVocab(){
-  const rows = await fetchAll((a,b)=>sb.from('vocab_items').select('id,level,en,ja,type,theme').eq('active',true).order('id').range(a,b));
-  D = rows.filter(r=>LV_FROM_DB[r.level]).map(r=>({ id:r.id, en:r.en, ja:r.ja, lv:LV_FROM_DB[r.level], type:r.type, theme:r.theme }));
+  const rows = await fetchAll((a,b)=>sb.from('vocab_items').select('id,level,en,ja,type,theme,example_en,example_ja').eq('active',true).order('id').range(a,b));
+  D = rows.filter(r=>LV_FROM_DB[r.level]).map(r=>({ id:r.id, en:r.en, ja:r.ja, lv:LV_FROM_DB[r.level], type:r.type, theme:r.theme, ex:r.example_en||'', exj:r.example_ja||'' }));
   if(!D.length) throw new Error('no vocab');
   const have = new Set(D.map(d=>d.theme));
   THEMES = [...THEME_ORDER.filter(t=>have.has(t)), ...[...have].filter(t=>!THEME_ORDER.includes(t)).sort()];
