@@ -246,7 +246,7 @@ const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:false, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v6', APP_DATE = '2026-10-08';
+const APP_VERSION = 'v7', APP_DATE = '2026-10-08';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -1236,7 +1236,15 @@ async function boot(){
 window.addEventListener('online', syncNow);
 window.addEventListener('offline', () => { if(!document.body.classList.contains('gate') && !Q) render(); });
 document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible' && (PENDING.length || OFFLINE)) syncNow(); });
-if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if('serviceWorker' in navigator){
+  // 新しい版の Service Worker が有効になったら、1回だけ読み直して最新の画面にする（初回インストール時とクイズ中は読み直さない）
+  const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(!hadSW || reloaded || Q) return;
+    reloaded = true; location.reload();
+  });
+  navigator.serviceWorker.register('./sw.js', { updateViaCache:'none' }).catch(()=>{});
+}
 boot();
 </script>
 </body>
