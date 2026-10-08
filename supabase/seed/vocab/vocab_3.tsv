@@ -1,0 +1,646 @@
+level	type	theme	en	ja	example_en	example_ja
+3	word	たべもの	cereal	シリアル
+3	word	たべもの	garlic	にんにく
+3	word	たべもの	flour	小麦粉
+3	word	たべもの	oil	油
+3	word	たべもの	sauce	ソース
+3	word	たべもの	pasta	パスタ
+3	word	たべもの	omelet	オムレツ
+3	word	たべもの	pea	えんどう豆
+3	word	たべもの	slice	うすい1切れ
+3	word	たべもの	lemonade	レモネード
+3	word	たべもの	supper	（軽めの）夕食
+3	word	たべもの	fast food	ファストフード
+3	word	たべもの	cooking	料理（すること）
+3	word	たべもの	oven	オーブン
+3	word	たべもの	pan	フライパン、なべ
+3	word	たべもの	napkin	ナプキン
+3	word	たべもの	mug	マグカップ
+3	word	たべもの	fried	油であげた
+3	word	たべもの	raw	生の
+3	word	たべもの	boiled	ゆでた
+3	word	たべもの	barbecue	バーベキュー
+3	word	たべもの	diet	ふだんの食事、ダイエット
+3	word	どうぶつ	chimpanzee	チンパンジー
+3	word	どうぶつ	creature	生き物
+3	word	どうぶつ	feather	羽
+3	word	どうぶつ	bug	（小さな）虫
+3	word	どうぶつ	shell	貝がら、から
+3	word	どうぶつ	endangered	絶滅のおそれがある
+3	word	かぞく・ひと	grandchild	孫
+3	word	かぞく・ひと	couple	夫婦、カップル
+3	word	かぞく・ひと	ancestor	先祖
+3	word	かぞく・ひと	citizen	市民
+3	word	かぞく・ひと	athlete	運動選手
+3	word	かぞく・ひと	astronaut	宇宙飛行士
+3	word	かぞく・ひと	author	著者
+3	word	かぞく・ひと	boss	上司
+3	word	かぞく・ひと	chef	シェフ
+3	word	かぞく・ひと	clerk	店員、事務員
+3	word	かぞく・ひと	composer	作曲家
+3	word	かぞく・ひと	director	監督
+3	word	かぞく・ひと	editor	編集者
+3	word	かぞく・ひと	expert	専門家
+3	word	かぞく・ひと	guard	警備員
+3	word	かぞく・ひと	host	（客をもてなす）主人
+3	word	かぞく・ひと	lawyer	弁護士
+3	word	かぞく・ひと	manager	支配人、管理者
+3	word	かぞく・ひと	patient	患者
+3	word	かぞく・ひと	photographer	写真家
+3	word	かぞく・ひと	secretary	秘書
+3	word	かぞく・ひと	soldier	兵士
+3	word	かぞく・ひと	winner	勝者
+3	word	かぞく・ひと	beginner	初心者
+3	word	かぞく・ひと	audience	観客、聴衆
+3	word	かぞく・ひと	crowd	群衆、人ごみ
+3	word	かぞく・ひと	staff	職員、スタッフ
+3	word	かぞく・ひと	traveler	旅行者
+3	word	かぞく・ひと	tour guide	ツアーガイド
+3	word	かぞく・ひと	receptionist	受付係
+3	word	かぞく・ひと	fisherman	漁師
+3	word	かぞく・ひと	lady	婦人
+3	word	かぞく・ひと	guy	男の人、やつ
+3	word	かぞく・ひと	foreigner	外国人
+3	word	かぞく・ひと	angel	天使
+3	word	かぞく・ひと	fairy	妖精
+3	word	かぞく・ひと	ghost	おばけ
+3	word	かぞく・ひと	youth	若者、青春時代
+3	word	かぞく・ひと	personality	性格、個性
+3	word	かぞく・ひと	character	登場人物、性格
+3	word	かぞく・ひと	generation	世代
+3	word	かぞく・ひと	society	社会
+3	word	かぞく・ひと	population	人口
+3	word	かぞく・ひと	nation	国家、国民
+3	word	かぞく・ひと	public	一般の人々
+3	word	かぞく・ひと	elderly	お年寄りの
+3	word	かぞく・ひと	senior	年上の
+3	word	からだ	ankle	足首
+3	word	からだ	chest	胸
+3	word	からだ	chin	あご
+3	word	からだ	tear	涙
+3	word	からだ	ill	（重い）病気の
+3	word	からだ	injure	けがをさせる
+3	word	からだ	pill	錠剤
+3	word	からだ	dizzy	めまいがする
+3	word	からだ	breathe	呼吸する
+3	word	からだ	weight	体重、重さ
+3	word	からだ	overweight	太りすぎの
+3	word	がっこう	chapter	（本の）章
+3	word	がっこう	essay	作文、エッセイ
+3	word	がっこう	title	題名
+3	word	がっこう	novel	小説
+3	word	がっこう	text	文章、本文
+3	word	がっこう	research	研究
+3	word	がっこう	education	教育
+3	word	がっこう	knowledge	知識
+3	word	がっこう	meaning	意味
+3	word	がっこう	expression	表現、表情
+3	word	がっこう	explanation	説明
+3	word	がっこう	opinion	意見
+3	word	がっこう	discussion	話し合い
+3	word	がっこう	debate	討論
+3	word	がっこう	argument	口論、議論
+3	word	がっこう	schoolwork	学校の勉強
+3	word	がっこう	semester	学期
+3	word	がっこう	campus	（大学の）キャンパス
+3	word	がっこう	college	（単科）大学、専門学校
+3	word	がっこう	course	講座、コース
+3	word	がっこう	level	水準、レベル
+3	word	がっこう	skill	技能、うでまえ
+3	word	がっこう	ability	能力
+3	word	がっこう	talent	才能
+3	word	がっこう	intelligence	知能
+3	word	がっこう	imagination	想像力
+3	word	がっこう	creativity	創造力
+3	word	がっこう	invention	発明
+3	word	がっこう	experience	経験
+3	word	がっこう	detail	細かい点
+3	word	がっこう	fact	事実
+3	word	がっこう	truth	真実
+3	word	がっこう	secret	秘密
+3	word	がっこう	mystery	なぞ
+3	word	がっこう	clue	手がかり
+3	word	がっこう	symbol	象徴、記号
+3	word	がっこう	pronunciation	発音
+3	word	がっこう	noun	名詞
+3	word	がっこう	verb	動詞
+3	word	がっこう	adjective	形容詞
+3	word	がっこう	conversation	会話
+3	word	がっこう	article	（新聞などの）記事
+3	word	がっこう	paragraph	段落
+3	word	がっこう	topic	話題
+3	word	がっこう	survey	調査
+3	word	がっこう	interview	インタビュー、面接
+3	word	がっこう	competition	競争、大会
+3	word	がっこう	award	賞
+3	word	がっこう	medal	メダル
+3	word	がっこう	championship	選手権
+3	word	ばしょ	area	地域
+3	word	ばしょ	capital	首都
+3	word	ばしょ	center	中心
+3	word	ばしょ	coast	海岸
+3	word	ばしょ	continent	大陸
+3	word	ばしょ	desert	砂漠
+3	word	ばしょ	valley	谷
+3	word	ばしょ	planet	惑星
+3	word	ばしょ	globe	地球儀
+3	word	ばしょ	path	小道
+3	word	ばしょ	highway	幹線道路
+3	word	ばしょ	gate	門
+3	word	ばしょ	entrance	入り口
+3	word	ばしょ	garage	車庫
+3	word	ばしょ	gallery	画廊、美術館
+3	word	ばしょ	mall	ショッピングモール
+3	word	ばしょ	cafeteria	カフェテリア
+3	word	ばしょ	cafe	喫茶店、カフェ
+3	word	ばしょ	bank	銀行
+3	word	ばしょ	seaside	海辺
+3	word	ばしょ	shore	岸
+3	word	ばしょ	roof	屋根
+3	word	ばしょ	balcony	バルコニー
+3	word	ばしょ	stair	階段（の1段）
+3	word	ばしょ	elevator	エレベーター
+3	word	ばしょ	escalator	エスカレーター
+3	word	ばしょ	downtown	繁華街で、町の中心部へ
+3	word	ばしょ	upstairs	上の階へ
+3	word	ばしょ	downstairs	下の階へ
+3	word	ばしょ	overseas	海外へ、海外で
+3	word	ばしょ	anywhere	どこでも、どこかに
+3	word	ばしょ	somewhere	どこかで
+3	word	ばしょ	kingdom	王国
+3	word	ばしょ	state	州、状態
+3	word	ばしょ	scene	場面
+3	word	ばしょ	scenery	景色
+3	word	ばしょ	view	ながめ、見方
+3	word	ばしょ	landscape	風景
+3	word	ばしょ	traffic	交通
+3	word	ばしょ	traffic light	信号機
+3	word	ばしょ	grocery store	食料品店
+3	word	ばしょ	drugstore	ドラッグストア
+3	word	ばしょ	court	（テニスなどの）コート、裁判所
+3	word	もの	alarm clock	目覚まし時計
+3	word	もの	basket	かご
+3	word	もの	belt	ベルト
+3	word	もの	bench	ベンチ
+3	word	もの	bookshelf	本だな
+3	word	もの	comb	くし
+3	word	もの	container	容器
+3	word	もの	cupboard	食器だな
+3	word	もの	drawer	引き出し
+3	word	もの	envelope	封筒
+3	word	もの	furniture	家具
+3	word	もの	handbag	ハンドバッグ
+3	word	もの	headphone	ヘッドホン
+3	word	もの	ID card	身分証明書
+3	word	もの	lock	錠、ロック
+3	word	もの	metal	金属
+3	word	もの	plastic	プラスチックの
+3	word	もの	rope	ロープ、なわ
+3	word	もの	screen	画面、スクリーン
+3	word	もの	software	ソフトウェア
+3	word	もの	sunglasses	サングラス
+3	word	もの	tie	ネクタイ
+3	word	もの	wood	木材、森
+3	word	もの	wool	羊毛
+3	word	もの	diamond	ダイヤモンド
+3	word	もの	crown	王冠
+3	word	もの	gas	ガス
+3	word	もの	tape	テープ
+3	word	もの	string	ひも
+3	word	もの	washing machine	洗濯機
+3	word	もの	website	ウェブサイト
+3	word	もの	Internet	インターネット
+3	word	もの	text message	（携帯電話の）メッセージ
+3	word	もの	mobile phone	携帯電話
+3	word	もの	digital camera	デジタルカメラ
+3	word	もの	program	番組、計画
+3	word	もの	product	製品
+3	word	もの	material	材料
+3	word	もの	chain	くさり
+3	word	もの	balloon	風船
+3	word	もの	receipt	レシート、領収書
+3	word	もの	cash	現金
+3	word	もの	bill	請求書、お札
+3	word	もの	fare	（乗り物の）運賃
+3	word	もの	fee	料金、謝礼
+3	word	もの	budget	予算
+3	word	あそび・スポーツ	adventure	冒険
+3	word	あそび・スポーツ	camping	キャンプをすること
+3	word	あそび・スポーツ	cycling	サイクリング
+3	word	あそび・スポーツ	climbing	登山
+3	word	あそび・スポーツ	hockey	ホッケー
+3	word	あそび・スポーツ	rugby	ラグビー
+3	word	あそび・スポーツ	snowboarding	スノーボード
+3	word	あそび・スポーツ	surfing	サーフィン
+3	word	あそび・スポーツ	walking	散歩、歩くこと
+3	word	あそび・スポーツ	board game	ボードゲーム
+3	word	あそび・スポーツ	cruise	船旅
+3	word	あそび・スポーツ	journey	（長い）旅
+3	word	あそび・スポーツ	flight	（飛行機の）便、飛行
+3	word	あそび・スポーツ	exhibition	展覧会
+3	word	あそび・スポーツ	performance	演技、公演
+3	word	あそび・スポーツ	entertainment	娯楽
+3	word	あそび・スポーツ	fashion	流行、ファッション
+3	word	あそび・スポーツ	leisure	余暇
+3	word	あそび・スポーツ	wedding	結婚式
+3	word	あそび・スポーツ	anniversary	記念日
+3	word	あそび・スポーツ	celebration	お祝い
+3	word	あそび・スポーツ	joke	冗談
+3	word	あそび・スポーツ	classical music	クラシック音楽
+3	word	あそび・スポーツ	rhythm	リズム
+3	word	あそび・スポーツ	photography	写真撮影
+3	word	あそび・スポーツ	painting	（絵の具でかいた）絵
+3	word	あそび・スポーツ	drawing	（線でかいた）絵、スケッチ
+3	word	あそび・スポーツ	horror	恐怖、ホラー
+3	word	あそび・スポーツ	romance	恋愛（の物語）
+3	word	しぜん・てんき	breeze	そよ風
+3	word	しぜん・てんき	flood	洪水
+3	word	しぜん・てんき	earthquake	地震
+3	word	しぜん・てんき	thunderstorm	雷雨
+3	word	しぜん・てんき	heat	暑さ、熱
+3	word	しぜん・てんき	shade	日かげ
+3	word	しぜん・てんき	shadow	影
+3	word	しぜん・てんき	bloom	（咲いている）花
+3	word	しぜん・てんき	branch	枝
+3	word	しぜん・てんき	bush	しげみ
+3	word	しぜん・てんき	root	根
+3	word	しぜん・てんき	harvest	収穫
+3	word	しぜん・てんき	rock	岩
+3	word	しぜん・てんき	dust	ほこり、ちり
+3	word	しぜん・てんき	pollution	汚染
+3	word	しぜん・てんき	natural	自然の
+3	word	じかん	beginning	始まり
+3	word	じかん	ending	結末
+3	word	じかん	childhood	子ども時代
+3	word	じかん	lunchtime	昼食の時間
+3	word	じかん	timetable	時刻表、時間割
+3	word	じかん	delay	遅れ
+3	word	じかん	recently	最近
+3	word	じかん	nowadays	近ごろは
+3	word	じかん	someday	（未来の）いつか
+3	word	じかん	forever	永遠に
+3	word	じかん	twice	2回、2倍
+3	word	じかん	daily	毎日の
+3	word	じかん	weekly	毎週の
+3	word	じかん	recent	最近の
+3	word	じかん	latest	最新の
+3	word	じかん	final	最後の
+3	word	じかん	ancient	古代の
+3	word	じかん	past	過去
+3	word	じかん	age	年齢、時代
+3	word	かず	centimeter	センチメートル
+3	word	かず	kilometer	キロメートル
+3	word	かず	kilogram	キログラム
+3	word	かず	gram	グラム
+3	word	かず	meter	メートル
+3	word	かず	liter	リットル
+3	word	かず	inch	インチ
+3	word	かず	cent	セント
+3	word	かず	euro	ユーロ
+3	word	かず	average	平均
+3	word	かず	double	2倍の
+3	word	かず	pair	1組、1対
+3	word	かず	piece	1つ、かけら
+3	word	かず	plenty	たくさん
+3	word	かず	plus	〜を加えて
+3	word	かず	rate	割合、料金
+3	word	かず	degree	（温度・角度の）度
+3	word	かず	cost	（費用が）かかる
+3	word	いろ・ようす	colorful	色あざやかな
+3	word	いろ・ようす	attractive	魅力的な
+3	word	いろ・ようす	brave	勇かんな
+3	word	いろ・ようす	brilliant	見事な
+3	word	いろ・ようす	certain	確実な
+3	word	いろ・ようす	clear	はっきりした、晴れた
+3	word	いろ・ようす	common	ありふれた、共通の
+3	word	いろ・ようす	complete	完全な
+3	word	いろ・ようす	confident	自信のある
+3	word	いろ・ようす	convenient	便利な
+3	word	いろ・ようす	crazy	夢中な、ばかげた
+3	word	いろ・ようす	creative	創造的な
+3	word	いろ・ようす	direct	まっすぐな、直接の
+3	word	いろ・ようす	electric	電気の
+3	word	いろ・ようす	enormous	巨大な
+3	word	いろ・ようす	familiar	よく知っている
+3	word	いろ・ようす	fancy	しゃれた
+3	word	いろ・ようす	fascinating	とても興味深い
+3	word	いろ・ようす	female	女性の
+3	word	いろ・ようす	fit	体調のよい
+3	word	いろ・ようす	gentle	おだやかな
+3	word	いろ・ようす	good-looking	顔立ちのよい
+3	word	いろ・ようす	helpful	助けになる
+3	word	いろ・ようす	human	人間の
+3	word	いろ・ようす	intelligent	知能の高い
+3	word	いろ・ようす	likely	〜しそうな
+3	word	いろ・ようす	lively	元気いっぱいの
+3	word	いろ・ようす	lost	道に迷った、なくした
+3	word	いろ・ようす	mysterious	なぞめいた
+3	word	いろ・ようす	national	国の、国民の
+3	word	いろ・ようす	native	生まれた土地の
+3	word	いろ・ようす	normal	標準の、正常な
+3	word	いろ・ようす	official	公式の
+3	word	いろ・ようす	opposite	反対の
+3	word	いろ・ようす	original	もとの、独創的な
+3	word	いろ・ようす	peaceful	平和な
+3	word	いろ・ようす	pleasant	心地よい
+3	word	いろ・ようす	polite	ていねいな
+3	word	いろ・ようす	powerful	強力な
+3	word	いろ・ようす	private	個人的な
+3	word	いろ・ようす	professional	プロの
+3	word	いろ・ようす	regular	規則正しい、ふだんの
+3	word	いろ・ようす	rude	失礼な
+3	word	いろ・ようす	similar	似ている
+3	word	いろ・ようす	single	たった1つの、独身の
+3	word	いろ・ようす	silly	ばかな
+3	word	いろ・ようす	smooth	なめらかな
+3	word	いろ・ようす	sudden	突然の
+3	word	いろ・ようす	suitable	適した
+3	word	いろ・ようす	surprising	おどろくべき
+3	word	いろ・ようす	unusual	めずらしい
+3	word	いろ・ようす	usual	いつもの
+3	word	いろ・ようす	whole	全体の
+3	word	いろ・ようす	wise	賢い
+3	word	いろ・ようす	wooden	木でできた
+3	word	いろ・ようす	ugly	みにくい
+3	word	いろ・ようす	strict	厳しい
+3	word	いろ・ようす	successful	成功した
+3	word	いろ・ようす	unhappy	不幸な
+3	word	いろ・ようす	unfair	不公平な
+3	word	いろ・ようす	unknown	知られていない
+3	word	いろ・ようす	well-known	よく知られた
+3	word	いろ・ようす	worse	より悪い
+3	word	いろ・ようす	worst	最も悪い
+3	word	いろ・ようす	better	よりよい
+3	word	いろ・ようす	best	最もよい
+3	word	いろ・ようす	awful	ものすごく悪い
+3	word	いろ・ようす	basic	基本的な
+3	word	いろ・ようす	deep	深い
+3	word	いろ・ようす	extra	余分の
+3	word	いろ・ようす	asleep	ねむって
+3	word	いろ・ようす	awake	目がさめて
+3	word	いろ・ようす	false	誤りの、うその
+3	word	いろ・ようす	tight	きつい
+3	word	いろ・ようす	fair	公平な
+3	word	いろ・ようす	ideal	理想的な
+3	word	いろ・ようす	social	社会の
+3	word	いろ・ようす	everyday	日常の
+3	word	いろ・ようす	elementary	初歩の、初等の
+3	word	いろ・ようす	dear	親愛なる
+3	word	いろ・ようす	closed	閉まった
+3	word	きもち	anxious	不安な
+3	word	きもち	confused	混乱した
+3	word	きもち	embarrassing	はずかしい（ような）
+3	word	きもち	frightened	おびえた
+3	word	きもち	grateful	感謝している
+3	word	きもち	relaxed	くつろいだ
+3	word	きもち	impatient	がまんできない
+3	word	きもち	attention	注意
+3	word	きもち	advice	助言
+3	word	きもち	pity	残念なこと、あわれみ
+3	word	きもち	pride	ほこり（自分をほこらしく思う気持ち）
+3	word	きもち	mood	気分
+3	word	きもち	sense	感覚
+3	word	きもち	doubt	疑い
+3	word	きもち	chance	機会、見こみ
+3	word	きもち	opportunity	（よい）機会
+3	word	きもち	purpose	目的
+3	word	きもち	success	成功
+3	word	きもち	effort	努力
+3	word	きもち	trouble	困ったこと
+3	word	きもち	danger	危険
+3	word	きもち	freedom	自由
+3	word	きもち	interest	興味
+3	word	きもち	thought	考え
+3	word	きもち	promise	約束
+3	word	うごき	accept	受け入れる
+3	word	うごき	achieve	達成する
+3	word	うごき	admire	感心する
+3	word	うごき	advise	忠告する
+3	word	うごき	allow	許す
+3	word	うごき	apologize	あやまる
+3	word	うごき	appear	現れる
+3	word	うごき	argue	言い争う
+3	word	うごき	avoid	さける
+3	word	うごき	belong	属する
+3	word	うごき	blame	責める
+3	word	うごき	bother	迷惑をかける
+3	word	うごき	cause	引き起こす
+3	word	うごき	chat	おしゃべりする
+3	word	うごき	cheer	声援を送る
+3	word	うごき	communicate	意思を伝え合う
+3	word	うごき	compare	比べる
+3	word	うごき	complain	不満を言う
+3	word	うごき	concentrate	集中する
+3	word	うごき	consider	よく考える
+3	word	うごき	continue	続ける
+3	word	うごき	copy	写す、まねる
+3	word	うごき	cover	おおう
+3	word	うごき	create	創り出す
+3	word	うごき	depend	頼る、〜しだいである
+3	word	うごき	destroy	破壊する
+3	word	うごき	develop	発達させる
+3	word	うごき	die	死ぬ
+3	word	うごき	disappear	消える
+3	word	うごき	discover	発見する
+3	word	うごき	divide	分ける
+3	word	うごき	download	ダウンロードする
+3	word	うごき	drive	運転する
+3	word	うごき	earn	かせぐ
+3	word	うごき	encourage	はげます
+3	word	うごき	exist	存在する
+3	word	うごき	expect	予期する、期待する
+3	word	うごき	explore	探検する
+3	word	うごき	fail	失敗する
+3	word	うごき	freeze	こおる
+3	word	うごき	gather	集まる、集める
+3	word	うごき	graduate	卒業する
+3	word	うごき	hit	打つ、ぶつかる
+3	word	うごき	hug	だきしめる
+3	word	うごき	improve	よくする、上達する
+3	word	うごき	include	含む
+3	word	うごき	increase	増える、増やす
+3	word	うごき	invent	発明する
+3	word	うごき	land	着陸する
+3	word	うごき	lie	横になる、うそをつく
+3	word	うごき	manage	管理する、なんとかやりとげる
+3	word	うごき	marry	結婚する
+3	word	うごき	offer	申し出る
+3	word	うごき	order	注文する、命令する
+3	word	うごき	organize	準備する、まとめる
+3	word	うごき	pack	荷造りする
+3	word	うごき	pass	通り過ぎる、合格する
+3	word	うごき	perform	演じる、演奏する
+3	word	うごき	point	指さす
+3	word	うごき	pour	注ぐ
+3	word	うごき	predict	予測する
+3	word	うごき	prefer	〜のほうを好む
+3	word	うごき	pretend	ふりをする
+3	word	うごき	prevent	防ぐ
+3	word	うごき	print	印刷する
+3	word	うごき	produce	生産する
+3	word	うごき	provide	提供する
+3	word	うごき	publish	出版する
+3	word	うごき	quit	やめる
+3	word	うごき	raise	上げる、育てる
+3	word	うごき	reach	届く、着く
+3	word	うごき	realize	気づく
+3	word	うごき	record	記録する、録音する
+3	word	うごき	recycle	リサイクルする
+3	word	うごき	regret	後悔する
+3	word	うごき	remind	思い出させる
+3	word	うごき	rent	（お金を払って）借りる
+3	word	うごき	replace	取りかえる
+3	word	うごき	satisfy	満足させる
+3	word	うごき	serve	（食事を）出す
+3	word	うごき	shine	かがやく
+3	word	うごき	steal	ぬすむ
+3	word	うごき	succeed	成功する
+3	word	うごき	suggest	提案する
+3	word	うごき	survive	生き残る
+3	word	うごき	swallow	飲みこむ
+3	word	うごき	trust	信頼する
+3	word	うごき	weigh	重さがある、重さを量る
+3	word	うごき	wander	歩き回る
+3	word	うごき	discuss	話し合う
+3	word	うごき	focus	焦点を合わせる
+3	word	うごき	judge	判断する
+3	word	うごき	let	〜させる
+3	word	うごき	mean	意味する
+3	word	うごき	pray	祈る
+3	word	うごき	set	置く、（時計などを）合わせる
+3	word	うごき	blow	（風が）ふく
+3	word	うごき	bend	曲げる
+3	word	うごき	sew	ぬう
+3	word	うごき	tidy	片づける
+3	word	うごき	spell	つづる
+3	word	うごき	attack	攻撃する
+3	word	うごき	contact	連絡する
+3	word	うごき	apply	申しこむ
+3	word	うごき	admit	認める
+3	word	うごき	oppose	反対する
+3	word	うごき	appreciate	ありがたく思う
+3	word	うごき	impress	感動させる
+3	word	うごき	forbid	禁じる
+3	word	ことば	actually	実は
+3	word	ことば	ahead	前方に
+3	word	ことば	anyway	とにかく
+3	word	ことば	badly	ひどく、悪く
+3	word	ことば	besides	そのうえ
+3	word	ことば	certainly	確かに
+3	word	ことば	clearly	はっきりと
+3	word	ことば	correctly	正しく
+3	word	ことば	especially	特に
+3	word	ことば	exactly	ちょうど、まさに
+3	word	ことば	extremely	非常に
+3	word	ことば	fortunately	幸運にも
+3	word	ことば	unfortunately	不運にも
+3	word	ことば	luckily	運よく
+3	word	ことば	hardly	ほとんど〜ない
+3	word	ことば	however	しかしながら
+3	word	ことば	indeed	本当に、実に
+3	word	ことば	instead	そのかわりに
+3	word	ことば	mainly	主に
+3	word	ことば	mostly	たいていは
+3	word	ことば	nearly	もう少しで
+3	word	ことば	perhaps	ひょっとしたら
+3	word	ことば	quietly	静かに
+3	word	ことば	quite	かなり
+3	word	ことば	rather	むしろ、やや
+3	word	ことば	seriously	真剣に
+3	word	ことば	simply	単に
+3	word	ことば	therefore	それゆえに
+3	word	ことば	anymore	（否定文で）もはや
+3	word	ことば	forward	前へ
+3	word	ことば	loudly	大声で
+3	word	ことば	softly	やさしく、静かに
+3	word	ことば	either	（否定文で）〜もまた
+3	word	ことば	else	ほかに
+3	word	ことば	against	〜に反対して
+3	word	ことば	except	〜を除いて
+3	word	ことば	since	〜以来
+3	word	ことば	toward	〜の方へ
+3	word	ことば	out of	〜から外へ
+3	word	ことば	beyond	〜をこえて
+3	word	ことば	within	〜以内に
+3	word	ことば	as	〜として
+3	word	ことば	at	〜で（場所・時刻）
+3	phrase	かず	a couple of ～	２つの～、２，３の～	I'll be back in [[a couple of]] days.	[[2、3]]日で戻るよ。
+3	phrase	じかん	in time	間に合って	We got to the station [[in time]].	私たちは駅に[[間に合った]]。
+3	phrase	うごき	think of ～	～のことを考える、～を思いつく	I often [[think of]] my old friends.	私はよく昔の友だちの[[ことを考える]]。
+3	phrase	きもち	give up ～	～をあきらめる	Don't [[give up]] your dream.	夢を[[あきらめ]]ないで。
+3	phrase	かぞく・ひと	get together	集まる	Let's [[get together]] this weekend.	今週末に[[集まろう]]。
+3	phrase	きもち	calm down	落ち着く	[[Calm down]] and listen to me.	[[落ち着いて]]、私の話を聞いて。
+3	phrase	うごき	keep doing	…し続ける	She [[kept running]] to the end.	彼女は最後まで[[走り続けた]]。
+3	phrase	うごき	make sure (～)	（～を）確かめる	[[Make sure]] the door is locked.	ドアにかぎがかかっているか[[確かめて]]。
+3	phrase	ばしょ	get lost	道に迷う	We [[got lost]] in the big city.	私たちは大きな町で[[道に迷った]]。
+3	phrase	うごき	ask for ～	～を求める	He [[asked for]] some water.	彼は水を[[ほしいと言った]]。
+3	phrase	じかん	used to do	以前は…したものだ	I [[used to]] live in Osaka.	私は[[以前は]]大阪に住んでいた。
+3	phrase	ことば	had better do	…したほうがいい	You [[had better]] go to bed early.	早くねた[[ほうがいい]]よ。
+3	phrase	かぞく・ひと	help A with B	AのBを手伝う	My brother [[helped me with]] my homework.	兄が私の宿題を[[手伝ってくれた]]。
+3	phrase	ことば	after all	結局、やっぱり	[[After all]], we stayed home.	[[結局]]、私たちは家にいた。
+3	phrase	じかん	all the time	いつも	My dog sleeps [[all the time]].	うちの犬は[[いつも]]ねている。
+3	phrase	ばしょ	all the way	ずっと、はるばる	He came [[all the way]] from Hokkaido.	彼は北海道から[[はるばる]]来た。
+3	phrase	ことば	～ and so on	～など	I bought eggs, milk, bread, [[and so on]].	たまご、牛乳、パン[[など]]を買った。
+3	phrase	ことば	as ～ as possible	できるだけ～	Please come [[as soon as possible]].	[[できるだけ早く]]来てください。
+3	phrase	じかん	as usual	いつものように	[[As usual]], she was late.	[[いつものように]]、彼女はおくれた。
+3	phrase	かず	at least	少なくとも	Read [[at least]] one book a month.	月に[[少なくとも]]1冊は本を読もう。
+3	phrase	じかん	at once	すぐに	Come here [[at once]].	[[すぐに]]ここに来なさい。
+3	phrase	ことば	not ～ at all	まったく～ない	I don't like spiders [[at all]].	私はクモが[[まったく]]好きではない。
+3	phrase	うごき	by hand	手で	This sweater was made [[by hand]].	このセーターは[[手で]]作られた。
+3	phrase	ことば	by mistake	まちがって	I took his umbrella [[by mistake]].	私は[[まちがって]]彼のかさを持ってきた。
+3	phrase	じかん	for a while	しばらくの間	Let's rest [[for a while]].	[[しばらく]]休もう。
+3	phrase	じかん	in a hurry	急いで	He left [[in a hurry]].	彼は[[急いで]]出ていった。
+3	phrase	ことば	in fact	実際に、実は	[[In fact]], I've never been abroad.	[[実は]]、外国に行ったことがない。
+3	phrase	じかん	in the end	結局は、最後には	[[In the end]], our team won.	[[最後には]]、私たちのチームが勝った。
+3	phrase	じかん	so far	今までのところ	Everything is fine [[so far]].	[[今のところ]]すべて順調だ。
+3	phrase	じかん	these days	このごろ	I'm busy [[these days]].	[[近ごろは]]いそがしい。
+3	phrase	きもち	thanks to ～	～のおかげで	[[Thanks to]] you, I passed the test.	きみの[[おかげで]]、テストに合格した。
+3	phrase	ばしょ	all over (～)	（～の）いたる所で	This song is popular [[all over]] the world.	この歌は世界[[中で]]人気だ。
+3	phrase	ことば	so ～ that …	とても～なので…	I was [[so tired that]] I went to bed early.	[[とてもつかれていたので]]早くねた。
+3	phrase	ことば	not only A but (also) B	AだけでなくBも	She speaks [[not only English but also French]].	彼女は[[英語だけでなくフランス語も]]話す。
+3	phrase	じかん	as soon as …	…するとすぐに	Call me [[as soon as]] you get home.	家に着い[[たらすぐに]]電話して。
+3	phrase	もの	Something is wrong with ～.	～はどこか調子が悪い	[[Something is wrong with]] my bike.	私の自転車は[[どこか調子が悪い]]。
+3	phrase	じかん	right away	今すぐ	I'll do it [[right away]].	[[今すぐ]]やるよ。
+3	phrase	きもち	agree with ～	（人・考え）に賛成する	I [[agree with]] you.	私はきみ[[に賛成だ]]。
+3	phrase	きもち	remember doing	…したのを覚えている	I [[remember meeting]] him before.	私は前に彼に[[会ったのを覚えている]]。
+3	phrase	きもち	remember to do	忘れずに…する	[[Remember to]] bring your lunch.	[[忘れずに]]お弁当を持ってきてね。
+3	phrase	きもち	be tired of ～	～にあきている	I'm [[tired of]] this game.	このゲームには[[あきた]]。
+3	phrase	じかん	by now	今ごろはもう	He should be home [[by now]].	彼は[[今ごろはもう]]家にいるはずだ。
+3	phrase	じかん	for now	今のところは	That's all [[for now]].	[[今のところは]]これで全部です。
+3	phrase	ことば	by chance	偶然に	I met her [[by chance]] at the station.	駅で[[偶然]]彼女に会った。
+3	phrase	あそび・スポーツ	take part in ～	～に参加する	I'll [[take part in]] the speech contest.	私はスピーチコンテスト[[に参加する]]。
+3	phrase	かぞく・ひと	look after ～	～の世話をする	Can you [[look after]] my cat?	私のねこの[[世話をして]]くれる？
+3	phrase	じかん	stay up	（寝ないで）起きている	I [[stayed up]] late last night.	きのうの夜はおそくまで[[起きていた]]。
+3	phrase	ことば	first of all	まず第一に	[[First of all]], wash your hands.	[[まず]]、手を洗いなさい。
+3	phrase	じかん	at the moment	今のところ、ちょうど今	He is busy [[at the moment]].	彼は[[今]]いそがしい。
+3	phrase	うごき	go out	外出する	Let's [[go out]] for dinner.	夕食を食べに[[出かけよう]]。
+3	phrase	きもち	be popular with ～	～に人気がある	This game [[is popular with]] children.	このゲームは子どもたち[[に人気がある]]。
+3	phrase	きもち	come true	（夢などが）実現する	I hope your dream will [[come true]].	きみの夢が[[かなう]]といいね。
+3	phrase	きもち	feel like doing	…したい気がする	I [[feel like eating]] pizza.	ピザが[[食べたい気分だ]]。
+3	phrase	じかん	one after another	次々に	The guests arrived [[one after another]].	お客さんが[[次々に]]着いた。
+3	phrase	じかん	every time …	…するたびに	[[Every time]] I see him, he smiles.	彼に会う[[たびに]]、彼はほほえむ。
+3	phrase	ことば	in order to do	…するために	I study hard [[in order to]] pass the exam.	試験に合格[[するために]]一生けんめい勉強する。
+3	phrase	うごき	check out ～	～を調べる、～を借り出す	I [[checked out]] three books from the library.	図書館で本を3冊[[借りた]]。
+3	phrase	うごき	hang up	電話を切る	Don't [[hang up]] yet.	まだ[[電話を切ら]]ないで。
+3	phrase	きもち	give ～ a try	～をためしてみる	It looks fun. Let's [[give it a try]].	楽しそう。[[ためしてみよう]]。
+3	phrase	かぞく・ひと	give ～ a hand	～に手を貸す	Can you [[give me a hand]]?	[[手を貸して]]くれる？
+3	phrase	うごき	call back	折り返し電話する	I'll [[call back]] later.	あとで[[折り返し電話します]]。
+3	phrase	かぞく・ひと	see ～ off	～を見送る	We [[saw her off]] at the airport.	私たちは空港で彼女を[[見送った]]。
+3	phrase	きもち	have no idea	見当がつかない	I [[have no idea]] where he went.	彼がどこへ行ったのか[[見当がつかない]]。
+3	phrase	じかん	take one's time	ゆっくりやる	[[Take your time]]. We're not in a hurry.	[[ゆっくりでいいよ]]。急いでないから。
+3	phrase	たべもの	help oneself to ～	～を自由に取って食べる	Please [[help yourself to]] the cookies.	クッキーを[[ご自由にどうぞ]]。
+3	phrase	きもち	be interested in ～	～に興味がある	I'm [[interested in]] space.	私は宇宙[[に興味がある]]。
+3	phrase	きもち	be proud of ～	～をほこりに思う	I'm [[proud of]] my team.	私は自分のチームを[[ほこりに思う]]。
+3	phrase	きもち	be surprised at ～	～におどろく	We [[were surprised at]] the news.	私たちはそのニュース[[におどろいた]]。
+3	phrase	いろ・ようす	be full of ～	～でいっぱいだ	The box [[is full of]] toys.	その箱はおもちゃ[[でいっぱいだ]]。
+3	phrase	じかん	be late for ～	～におくれる	Don't [[be late for]] school.	学校[[におくれ]]ないで。
+3	idiom	かいわ	I'm afraid not.	残念ながらちがうと思います。	"Is she at home?" "[[I'm afraid not.]]"	「彼女は家にいますか。」「[[残念ながらいません。]]」
+3	idiom	かいわ	You're kidding.	冗談でしょう。	"I won the lottery!" "[[You're kidding.]]"	「宝くじが当たった！」「[[冗談でしょう。]]」
+3	idiom	かいわ	What's the matter?	どうしたの？	"[[What's the matter?]]" "I lost my wallet."	「[[どうしたの？]]」「さいふをなくしたんだ。」
+3	idiom	かいわ	That sounds like fun.	楽しそうだね。	"Let's go camping." "[[That sounds like fun.]]"	「キャンプに行こう。」「[[楽しそうだね。]]」
+3	idiom	かいわ	May I take a message?	伝言をうかがいましょうか。	"He's out now. [[May I take a message?]]"	「彼は今外出中です。[[伝言をうかがいましょうか。]]」
+3	idiom	かいわ	I'm just looking.	見ているだけです。	"Can I help you?" "[[I'm just looking.]]"	「いらっしゃいませ。」「[[見ているだけです。]]」
+3	idiom	かいわ	Why not?	もちろん、いいよ。	"Shall we go together?" "[[Why not?]]"	「いっしょに行かない？」「[[もちろん。]]」
+3	idiom	かいわ	Help yourself.	ご自由にどうぞ。	"Can I have some cake?" "Sure. [[Help yourself.]]"	「ケーキをもらってもいい？」「いいよ。[[ご自由にどうぞ。]]」
+3	idiom	かいわ	Take care.	気をつけてね。	"I'm going home now." "OK. [[Take care.]]"	「もう帰るね。」「うん。[[気をつけてね。]]」
+3	idiom	かいわ	Excuse me, but ～?	すみませんが、～？	"[[Excuse me, but]] could you take our picture?"	「[[すみませんが]]、写真をとってもらえますか。」
