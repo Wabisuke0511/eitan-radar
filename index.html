@@ -246,7 +246,7 @@ const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:true, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v8', APP_DATE = '2026-10-08';
+const APP_VERSION = 'v9', APP_DATE = '2026-10-11';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -422,7 +422,7 @@ function vWeak(){
     const x = cellAgg(null,m,lv), a = x.s? x.c/x.s : null;
     return `<div class="pbar"><div class="n">${MODES[m]}</div><div class="bar"><i style="width:${a===null?0:a*100}%;background:hsl(${a===null?0:4+a*126} 70% 50%)"></i></div><div class="v">${a===null?'–':pct(a)+'%'}</div></div>`;
   }).join('');
-  const top = filt(lv).map(d=>({d,a:accOf(itemAgg(d.id)),s:itemAgg(d.id).s})).filter(o=>o.a!==null && o.s>=4).sort((a,b)=>a.a-b.a).slice(0,5);
+  const worst = worstList(lv), wn = UI.worstN || 5, top = worst.slice(0, wn);
   return `
   <h1>弱点マップ</h1><p class="sub">テーマ × 問題の形ごとの正答率。タップで中身を見られます。</p>
   <div style="height:12px"></div>${seg(LVSEG, lv, 'setLv')}
@@ -433,11 +433,34 @@ function vWeak(){
   ${FEATURES.ai?aiCard():''}
   <h2>問題の形べつ</h2>${modeBars}
   <h2>種類べつ</h2>${typeBars}
-  <h2>苦手ワード ワースト5</h2>
-  <div class="list">${top.map(o=>wordRow(o.d,`openWord(${o.d.id})`)).join('') || '<div class="empty">データがたまると表示されます</div>'}</div>
+  <h2>苦手ワード</h2>
+  ${seg([[5,'ワースト5'],[30,'ワースト30'],[100,'ワースト100']], wn, 'setWorstN')}
+  <p class="sub" style="margin:8px 0">まちがえた回数が多い順（同じなら正答率が低い順）・${worst.length}語のうち${top.length}語</p>
+  <div class="list">${top.map((o,i)=>worstRow(o,i)).join('') || '<div class="empty">まちがえた語は まだありません</div>'}</div>
+  ${top.length ? `<div style="height:12px"></div><button class="btn btn-main" onclick="startWorst()">このリストを れんしゅう（${Math.min(20, top.length)}問）</button>` : ''}
 `;
 }
 function setLv(v){ UI.lv=v; render(); }
+// 苦手ワード：まちがえたことがある語を、まちがえた回数が多い順（同じなら正答率が低い順→出題が多い順）に並べる
+function worstList(lv){
+  return filt(lv).map(d=>{ const x=itemAgg(d.id); return { d, s:x.s, c:x.c, w:x.s-x.c }; })
+    .filter(o=>o.w>0)
+    .sort((a,b)=> b.w-a.w || (a.c/a.s)-(b.c/b.s) || b.s-a.s);
+}
+function worstRow(o, i){
+  const d = o.d, a = o.c/o.s;
+  return `<div class="wr" onclick="openWord(${d.id})" style="cursor:pointer">
+    <div style="width:26px;font-weight:800;color:var(--ink3);font-variant-numeric:tabular-nums">${i+1}</div>
+    <div class="w"><div class="en"><span class="tag l${d.lv}">${LVN[d.lv]}</span>${esc(d.en)}</div>
+    <div class="ja">${esc(d.ja)}</div>${dots(d.id)}</div>
+    <div style="text-align:right;font-size:12px;color:var(--ink2);white-space:nowrap">まちがい <b style="font-size:16px;color:var(--bad)">${o.w}</b>回<br>正答率 ${pct(a)}%</div>
+    <button class="spk" aria-label="発音" onclick="event.stopPropagation();speakId(${d.id})">🔊</button></div>`;
+}
+function setWorstN(v){ UI.worstN = +v; render(); }
+function startWorst(){
+  const pool = worstList(UI.lv).slice(0, UI.worstN || 5).map(o=>o.d).filter(d=>isOpen(d.lv));
+  startQuiz(pool, { mode:'mix', n:Math.min(20, pool.length), prio:'weak' });
+}
 
 function vBook(){
   const list = D.filter(d => (UI.wlv==='all'||d.lv==UI.wlv) && (UI.wtype==='all'||d.type===UI.wtype));
