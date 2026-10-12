@@ -203,6 +203,10 @@
   .qcard .qexj { font-size:14px; color:var(--ink2); margin-top:8px; }
   .exb { margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:15px; }
   .exb b { color:var(--primary); }
+  .medal { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; border-radius:50%; line-height:1;
+    background:radial-gradient(circle at 32% 28%, rgba(255,255,255,.75), rgba(255,255,255,0) 55%), var(--mc);
+    box-shadow:0 0 0 3px #fff, 0 0 0 6px var(--mc); margin:6px; }
+  .rankcard { display:flex; gap:12px; align-items:center; border:1px solid var(--line) !important; }
   .tiles { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:0 0 14px; }
   .tile { min-width:44px; min-height:48px; padding:6px 12px; border-radius:12px; font-size:20px; font-weight:800; line-height:1.2;
     background:var(--surface); border:2px solid var(--line); color:var(--ink); }
@@ -246,7 +250,7 @@ const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:true, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v9', APP_DATE = '2026-10-11';
+const APP_VERSION = 'v10', APP_DATE = '2026-10-12';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -268,7 +272,7 @@ const byId = id => D.find(d=>d.id===id);
 /* ============ 状態 ============ */
 let sb = null, USER = null, CHILD = null;
 let PENDING = [];  // 保存に失敗した回答セッション（再送用）
-let S = { stats:{}, recent:[], today:0, cleared:{}, sessions:[], report:repDef() };
+let S = { stats:{}, recent:[], today:0, cleared:{}, sessions:[], paid:{}, report:repDef() };
 let UI = { tab:'home', lv:'all', wlv:'all', wtype:'all' };
 let C = { lv:[5,4], types:['word','phrase','idiom'], mode:'mix', prio:'weak', n:10 };
 let Q = null;
@@ -320,6 +324,77 @@ function everWrong(d){ const x = itemAgg(d.id); return x.s > x.c;
 function curLv(){ for(const l of LVORD) if(!(S.cleared&&S.cleared[l])) return l; return null; }
 const isOpen = l => !!((S.cleared&&S.cleared[l]) || l===curLv());
 
+/* ============ ランクと賞金 ============ */
+// ランク n ＝ 下から n 個の級をクリア（5級→…→準1級）。賞金は n × 1,000円（ウッドは0円）
+// 受け渡しの記録は reward_payments（保護者の PIN を確認してから記録。達成前のランクは DB 側でも記録できない）
+const RANKS = [
+  { name:'ウッド冒険者',   chara:'🐣', color:'#8d6e63' },
+  { name:'カッパー冒険者', chara:'🐥', color:'#b87333' },
+  { name:'ブロンズ冒険者', chara:'🦊', color:'#c07a2c' },
+  { name:'アイアン冒険者', chara:'🐺', color:'#5f6b7a' },
+  { name:'シルバー冒険者', chara:'🦁', color:'#8e9aa8' },
+  { name:'ゴールド冒険者', chara:'🐲', color:'#c99a06' },
+  { name:'プラチナ冒険者', chara:'🦄', color:'#3aa6c4' },
+];
+const prize = n => n * 1000;
+const yen = n => n.toLocaleString('ja-JP') + '円';
+function rankNow(){ let n = 0; for(const l of LVORD){ if(S.cleared && S.cleared[l]) n++; else break; } return n; }
+function unpaid(){ let sum = 0; for(let r=1; r<=rankNow(); r++) if(!(S.paid||{})[r]) sum += prize(r); return sum; }
+function medal(r, size){
+  const R = RANKS[r];
+  return `<span class="medal" style="--mc:${R.color};width:${size}px;height:${size}px;font-size:${Math.round(size*.5)}px">${R.chara}</span>`;
+}
+function rankCard(){
+  const n = rankNow(), R = RANKS[n], next = RANKS[n+1], u = unpaid();
+  return `<button class="curcard rankcard" onclick="go('road')">${medal(n,60)}
+    <div style="flex:1;min-width:0"><div class="sub">いまのランク</div><b style="font-size:18px;color:${R.color}">${R.name}</b>
+    <div class="sub">${next ? `${LVN[LVORD[n]]}をクリアで <b>${next.name}</b>（賞金 ${yen(prize(n+1))}）` : 'さいこうランク！ おめでとう！'}</div>
+    ${u ? `<div class="sub" style="color:var(--bad);font-weight:700">🎁 まだもらっていない賞金：${yen(u)}</div>` : ''}</div></button>`;
+}
+function rankLadder(){
+  const n = rankNow(), paid = S.paid || {};
+  let gave = 0; for(let r=1; r<=n; r++) if(paid[r]) gave += prize(r);
+  const rows = RANKS.map((R, i) => {
+    const got = i <= n, pd = paid[i];
+    const cond = i === 0 ? 'スタート' : `${LVN[LVORD[i-1]]}クリア ・ 賞金 ${yen(prize(i))}`;
+    let right = '';
+    if(i > 0 && got) right = pd
+      ? `<div style="text-align:right;font-size:12px;color:var(--good);font-weight:700">✓ もらった<br><span style="color:var(--ink3);font-weight:400">${jmd(new Date(pd))}</span></div><button class="sub" style="min-height:44px;padding:0 6px;text-decoration:underline" onclick="openPay(${i},true)">取消</button>`
+      : `<button class="btn btn-main" style="width:auto;min-height:44px;padding:6px 12px;font-size:14px" onclick="openPay(${i},false)">🎁 わたす</button>`;
+    else if(i > 0) right = `<span style="font-size:20px">🔒</span>`;
+    return `<div class="wr" style="${got?'':'opacity:.55'}">${medal(i,44)}
+      <div class="w"><div class="en" style="color:${R.color}">${R.name}${i===n?' <span class="tag" style="background:var(--primary)">いま</span>':''}</div><div class="ja">${cond}</div></div>${right}</div>`;
+  }).reverse().join('');
+  return `<h2>ランクと賞金</h2>
+    <div class="list">${rows}</div>
+    <p class="sub" style="margin-top:8px">もらった賞金の合計：${yen(gave)} ／ まだ：${yen(unpaid())}（おうちの人がPINを入れて記録します）</p>
+    <div style="height:8px"></div>`;
+}
+function openPay(r, undo){
+  if(isOffline() || !(USER && USER.email)){ openSheet(`<h1>賞金の記録</h1><p class="sub">オフラインのため記録できません。つながってから、もう一度ためしてください。</p>`); return; }
+  openSheet(`<h1>${undo ? '記録の取り消し' : '賞金をわたす'}</h1>
+    <p class="sub">${RANKS[r].name}（${LVN[LVORD[r-1]]}クリア）の賞金 <b>${yen(prize(r))}</b>${undo ? 'を「もらった」記録から取り消します。' : 'をわたしたら、保護者のPINを入れて記録します。'}</p>
+    <label class="lbl" for="ppin">保護者のPIN（ログインのPIN）</label>
+    <input id="ppin" class="fld" type="password" inputmode="numeric" autocomplete="current-password" maxlength="12" onkeydown="if(event.key==='Enter')savePay(${r},${!!undo})">
+    <div class="need" id="pmsg" style="margin:10px 0;color:var(--bad)"></div>
+    <button class="btn btn-main" id="pbtn" onclick="savePay(${r},${!!undo})">${undo ? '取り消す' : 'わたしたことを記録する'}</button>`);
+}
+async function savePay(r, undo){
+  const pin = document.getElementById('ppin').value, btn = document.getElementById('pbtn');
+  const msg = t => { const e = document.getElementById('pmsg'); if(e) e.textContent = t; };
+  if(!pin) return msg('PINを入れてください');
+  btn.disabled = true; msg('');
+  const chk = await sb.auth.signInWithPassword({ email:USER.email, password:pin });   // 保護者の PIN の確認
+  if(chk.error){ btn.disabled = false; return msg(isNetErr(chk.error) ? '通信できませんでした' : 'PINがちがいます'); }
+  const res = undo
+    ? await sb.from('reward_payments').delete().eq('child_id', CHILD.id).eq('rank', r)
+    : await sb.from('reward_payments').insert({ child_id:CHILD.id, rank:r, amount:prize(r) });
+  if(res.error){ console.error(res.error); btn.disabled = false; return msg('記録できませんでした。もう一度ためしてください'); }
+  closeSheet();
+  try{ await refreshData(); }catch(e){ console.error(e); }
+  render();
+}
+
 /* ============ 共通パーツ ============ */
 function dots(id){
   return `<div class="dots">${Object.keys(MODES).map(m=>{
@@ -358,6 +433,7 @@ function vHome(){
   return `
   <h1 style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">えいたんレーダー<small style="font-size:11px;font-weight:600;color:var(--ink3);white-space:nowrap">${APP_VERSION} ・ ${APP_DATE}</small></h1>
   <p class="sub">英検5級〜準1級。苦手を見つけて、つぶして、次の級へ。</p>
+  ${rankCard()}
   ${w ? `<div class="hero"><small>いま いちばん苦手なところ</small>
     <div class="big">${w.t} × ${MODES[w.m]}</div>
     <div class="pct">正答率 ${pct(w.a)}%（${w.s}回の挑戦から）</div>
@@ -671,7 +747,11 @@ function renderResult(){
   if(!Q.sess && Q.answers.length){ Q.sess = mkSess(); sendSession(Q.sess); }
   const s = Q.sess;
   const newly = (s && s.state==='done') ? s.newly : [];
+  const rk = rankNow();
   const banner = newly.length ? `<div class="ai" style="text-align:center"><div class="hl">🎉 ${newly.map(l=>LVN[l]).join('・')}クリア！</div>
+    <div style="margin:10px 0 4px">${medal(rk,80)}</div>
+    <div class="hl" style="color:${RANKS[rk].color}">ランクアップ！ ${RANKS[rk].name}になった！</div>
+    <p class="sub" style="font-weight:700;color:var(--ink)">🎁 賞金 ${yen(prize(rk))}。おうちの人にもらおう！</p>
     <p class="sub">${curLv()===null?'ぜんぶの級をクリアしました！':LVN[curLv()]+'が解放されました'}</p>
     <div style="height:10px"></div><button class="btn btn-main" onclick="closeQuiz();go('road')">ロードマップを見る</button></div>` : '';
   const msg = p>=.9 ? 'すばらしい！' : p>=.7 ? 'いいちょうし！' : p>=.4 ? 'あと少し！ まちがえた語を つぶそう' : 'まちがえた所が、のびしろ！';
@@ -742,6 +822,7 @@ function vRoadmap(){
   }).join('');
   return `<h1>ロードマップ</h1>
   <p class="sub">各級の全単語を正解して（${REQTXT}）、正答率${Math.round(GATE*100)}%にすると、次の級が解放されます。下の5級からスタート。</p>
+  ${rankLadder()}
   <div class="road"><div class="sub" style="margin:0 0 10px 54px">🏁 ゴール：英検準1級</div>${nodes}
     <div class="sub" style="margin-left:54px">🚩 スタート：英検5級</div></div>
 `;
@@ -1107,6 +1188,10 @@ async function refreshData(){
     seen.add(r.item_id); srv.recent.push(r.item_id);
     if(srv.recent.length >= 12) break;
   }
+  // 賞金の受け渡し記録（テーブルがない・読めない場合も、ほかの表示は続ける）
+  const pay = await sb.from('reward_payments').select('rank,paid_at').eq('child_id',cid);
+  srv.paid = {};
+  if(pay.error) console.error('reward_payments', pay.error); else for(const r of pay.data) srv.paid[r.rank] = r.paid_at;
   saveSnap(srv);                 // 端末には「サーバーの値」だけを保存する
   Object.assign(S, srv);
   PENDING.forEach(s=>applyLocal(s.answers));
