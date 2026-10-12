@@ -326,7 +326,8 @@ function curLv(){ for(const l of LVORD) if(!(S.cleared&&S.cleared[l])) return l;
 const isOpen = l => !!((S.cleared&&S.cleared[l]) || l===curLv());
 
 /* ============ ランクと賞金 ============ */
-// ランク n ＝ 下から n 個の級をクリア（5級→…→準1級）。賞金は n × 1,000円（ウッドは0円）
+// ランク n ＝ 下から n 個の級をクリア（5級→…→準1級）。賞金は1〜3段目が各1,000円、4段目から500円ずつ上がる（ウッドは0円）。
+// SQL（reward_payments の amount の check）と同じ式にすること
 // 受け渡しの記録は reward_payments（保護者の PIN を確認してから記録。達成前のランクは DB 側でも記録できない）
 const RANKS = [
   { name:'ウッド冒険者',   chara:'🐣', color:'#8d6e63' },
@@ -337,7 +338,7 @@ const RANKS = [
   { name:'ゴールド冒険者', chara:'🐲', color:'#c99a06' },
   { name:'プラチナ冒険者', chara:'🦄', color:'#3aa6c4' },
 ];
-const prize = n => n * 1000;
+const prize = n => n <= 0 ? 0 : n <= 3 ? 1000 : 1000 + (n - 3) * 500;
 const yen = n => n.toLocaleString('ja-JP') + '円';
 function rankNow(){ let n = 0; for(const l of LVORD){ if(S.cleared && S.cleared[l]) n++; else break; } return n; }
 function unpaid(){ let sum = 0; for(let r=1; r<=rankNow(); r++) if(!(S.paid||{})[r]) sum += prize(r); return sum; }
