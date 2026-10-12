@@ -250,7 +250,7 @@ const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:true, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v12', APP_DATE = '2026-10-12';
+const APP_VERSION = 'v13', APP_DATE = '2026-10-12';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -530,7 +530,7 @@ function vPractice(){
     <div class="chips">${[['weak','苦手をおおめに'],['all','ぜんぶ同じ'],['new','まだやってない語'],['miss','まちがえたことがある語']].map(([k,l])=>`<button class="chip ${C.prio===k?'on':''}" onclick="setC('prio','${k}')">${l}</button>`).join('')}</div>
     ${C.prio==='miss' ? `<p class="sub" style="margin-top:8px">${missN ? `えらんだ範囲に ${missN}語 あります` : 'えらんだ範囲に、まちがえたことがある語はまだありません'}</p>` : ''}</div>
   <div class="field"><label>問題数</label>
-    <div class="chips">${[5,10,20].map(n=>`<button class="chip ${C.n===n?'on':''}" onclick="setC('n',${n})">${n}問</button>`).join('')}</div></div>
+    <div class="chips">${[5,10,20,50,100].map(n=>`<button class="chip ${C.n===n?'on':''}" onclick="setC('n',${n})">${n}問</button>`).join('')}</div></div>
   <button class="btn btn-main" ${C.prio==='miss'&&!missN?'disabled style="opacity:.45"':''} onclick="startFromConfig()">スタート</button>`;
 }
 function togLv(v){ v=+v; C.lv = C.lv.includes(v) ? (C.lv.length>1 ? C.lv.filter(x=>x!==v) : C.lv) : [...C.lv,v]; render(); }
