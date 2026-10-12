@@ -250,7 +250,7 @@ const SUPABASE_URL = 'https://otorkvmcnhwspjwypurb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3Jrdm1jbmh3c3Bqd3lwdXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNDg1MDMsImV4cCI6MjA5ODcyNDUwM30.gFXHoRaPUc2fT2ZkvUTSYJAh-TiPkRz-TI4LMpsI1lI';
 const FEATURES = { ai:false, report:true, line:false };
 // ★ push のたびに、sw.js の CACHE_VERSION と一緒に上げる（ホームのタイトル右に表示）
-const APP_VERSION = 'v10', APP_DATE = '2026-10-12';
+const APP_VERSION = 'v11', APP_DATE = '2026-10-12';
 
 /* ============ データ ============ */
 const MODES = { en2ja:'英→和', ja2en:'和→英', spell:'スペル' };
@@ -271,6 +271,7 @@ const byId = id => D.find(d=>d.id===id);
 
 /* ============ 状態 ============ */
 let sb = null, USER = null, CHILD = null;
+let KIDS = [], BOARD = null;   // 保護者アカウントの子ども全員／きょうだいランキング
 let PENDING = [];  // 保存に失敗した回答セッション（再送用）
 let S = { stats:{}, recent:[], today:0, cleared:{}, sessions:[], paid:{}, report:repDef() };
 let UI = { tab:'home', lv:'all', wlv:'all', wtype:'all' };
@@ -395,6 +396,62 @@ async function savePay(r, undo){
   render();
 }
 
+/* ============ きょうだい（子どもの切り替え・ランキング） ============ */
+// ランキングは「おぼえた語」の数。いまの子は端末上の値（未送信ぶんを含む）、ほかの子はサーバーの item_stats で数える
+async function loadBoard(){
+  if(KIDS.length < 2 || !sb || isOffline()){ BOARD = null; return; }
+  const ids = KIDS.map(k=>k.id), lvOf = new Map(D.map(d=>[d.id, d.lv]));
+  const rows = await fetchAll((a,b)=>sb.from('item_stats').select('child_id,item_id,mode,correct').in('child_id', ids).order('child_id').order('item_id').order('mode').range(a,b));
+  const sum = {};
+  for(const r of rows){ const m = (sum[r.child_id] = sum[r.child_id] || {}); m[r.item_id] = (m[r.item_id] || 0) + r.correct; }
+  BOARD = KIDS.map(k=>{
+    let n = 0;
+    if(CHILD && k.id === CHILD.id) n = D.filter(mastered).length;
+    else for(const [id, c] of Object.entries(sum[k.id] || {})){ const lv = lvOf.get(+id); if(lv && c >= REQ[lv]) n++; }
+    return { id:k.id, name:k.name, n };
+  }).sort((a,b)=>b.n-a.n);
+}
+function boardCard(){
+  if(!BOARD || BOARD.length < 2) return '';
+  return `<h2>🏆 きょうだいランキング（おぼえた語）</h2><div class="list">${BOARD.map((b,i)=>`<div class="wr" ${CHILD && b.id===CHILD.id ? 'style="background:var(--surface2)"' : ''}>
+    <div style="width:30px;font-size:20px;text-align:center;font-weight:800">${['👑','🥈','🥉'][i] || (i+1)}</div>
+    <div class="w"><div class="en">${esc(b.name)}${CHILD && b.id===CHILD.id ? ' <span class="tag" style="background:var(--primary)">いま</span>' : ''}</div></div>
+    <div style="font-weight:800;font-size:18px;font-variant-numeric:tabular-nums">${b.n}<small style="font-size:12px;color:var(--ink2)"> 語</small></div></div>`).join('')}</div>`;
+}
+function openKids(){
+  const list = (KIDS.length ? KIDS : [CHILD]).filter(Boolean).map(k=>`<button class="ch ${CHILD && k.id===CHILD.id ? 'ok' : ''}" onclick="switchChild('${k.id}')">👤 ${esc(k.name)}${CHILD && k.id===CHILD.id ? '（いま）' : ''}</button>`).join('');
+  openSheet(`<h1>だれが あそぶ？</h1><div style="height:8px"></div>${list}
+    ${isOffline() ? '<p class="sub">オフライン中は、切り替えと追加はできません。</p>' : `
+    <label class="lbl" for="kidname">子どもを追加</label>
+    <input id="kidname" class="fld" type="text" maxlength="30" placeholder="なまえ" autocomplete="off" onkeydown="if(event.key==='Enter')addKid()">
+    <div class="need" id="kmsg" style="margin:8px 0;color:var(--bad)"></div>
+    <button class="btn btn-sub" id="kbtn" onclick="addKid()">＋ 追加する</button>`}`);
+}
+async function addKid(){
+  const v = document.getElementById('kidname').value.trim(), btn = document.getElementById('kbtn');
+  const msg = t => { const e = document.getElementById('kmsg'); if(e) e.textContent = t; };
+  if(!v) return msg('なまえを入れてください');
+  btn.disabled = true;
+  const { data, error } = await sb.from('children').insert({ parent_id:USER.id, name:v }).select('id,name').single();
+  if(error){ console.error(error); btn.disabled = false; return msg('追加できませんでした。もう一度ためしてください'); }
+  KIDS.push(data); openKids();
+  loadBoard().then(()=>render()).catch(e=>console.error('board', e));
+}
+async function switchChild(id){
+  if(!CHILD || id === CHILD.id || isOffline()){ closeSheet(); return; }
+  closeSheet();
+  document.getElementById('app').innerHTML = '<div class="empty">よみこみ中…</div>';
+  if(PENDING.length) await flushPending();   // 前の子の未送信の結果を先に送る（送れなければ端末に残る）
+  CHILD = KIDS.find(k=>k.id===id); lsSet('eitan-child', id);
+  loadPending(); S.report = repDef(); BOARD = null;
+  try{
+    await refreshData();
+    if(FEATURES.report){ try{ await loadReport(); }catch(e){ console.error('report settings', e); } }
+  }catch(e){ console.error(e); return showFatal('データを読みこめませんでした。通信を確かめて、もう一度ためしてください。'); }
+  C.lv = [curLv() || 5]; UI.tab = 'home';
+  render(); window.scrollTo(0,0);
+}
+
 /* ============ 共通パーツ ============ */
 function dots(id){
   return `<div class="dots">${Object.keys(MODES).map(m=>{
@@ -433,6 +490,7 @@ function vHome(){
   return `
   <h1 style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">えいたんレーダー<small style="font-size:11px;font-weight:600;color:var(--ink3);white-space:nowrap">${APP_VERSION} ・ ${APP_DATE}</small></h1>
   <p class="sub">英検5級〜準1級。苦手を見つけて、つぶして、次の級へ。</p>
+  <div style="margin-top:10px"><button class="chip" style="min-height:44px" onclick="openKids()">👤 ${esc(CHILD ? CHILD.name : '')} ▾</button></div>
   ${rankCard()}
   ${w ? `<div class="hero"><small>いま いちばん苦手なところ</small>
     <div class="big">${w.t} × ${MODES[w.m]}</div>
@@ -444,6 +502,7 @@ function vHome(){
   ${pendingCard()}
   ${curCard()}
   ${FEATURES.report?reportCard():''}
+  ${boardCard()}
   <div class="stat">
     <div><b>${S.today}</b><span>きょうの問題数</span></div>
     <div><b>${streak()}</b><span>れんぞく日数</span></div>
@@ -1195,6 +1254,8 @@ async function refreshData(){
   saveSnap(srv);                 // 端末には「サーバーの値」だけを保存する
   Object.assign(S, srv);
   PENDING.forEach(s=>applyLocal(s.answers));
+  // きょうだいランキングは後から読む（失敗しても画面はそのまま）
+  loadBoard().then(()=>{ if(!Q && !document.body.classList.contains('gate')) render(); }).catch(e=>console.error('board', e));
 }
 function mkSess(){
   const s = { id:Date.now()+'-'+Math.random().toString(36).slice(2,8), started:new Date(Q.t0).toISOString(), answers:Q.answers.slice(), state:'new', newly:[] };
@@ -1346,10 +1407,12 @@ function offlineStart(uid){
 async function startApp(user){
   USER = user;
   try{
-    const r = await sb.from('children').select('id,name').order('created_at').limit(1);
+    const r = await sb.from('children').select('id,name').order('created_at');
     if(r.error) throw r.error;
     if(!r.data.length) return showNameForm();
-    CHILD = r.data[0]; loadPending();
+    KIDS = r.data;
+    const want = lsGet('eitan-child');   // この端末で最後に選んだ子
+    CHILD = KIDS.find(k=>k.id===want) || KIDS[0]; loadPending();
     await loadVocab();
     await refreshData();
     if(FEATURES.report){ try{ await loadReport(); }catch(e){ console.error('report settings', e); } }
@@ -1366,7 +1429,7 @@ async function startApp(user){
 async function logout(){
   if(PENDING.length && !confirm('保存できていない結果があります。ログアウトすると失われます。ログアウトしますか？')) return;
   if(CHILD){ lsDel(pendKey()); }
-  lsDel(SNAP_KEY);
+  lsDel(SNAP_KEY); lsDel('eitan-child');
   try{ await sb.auth.signOut(); }catch(e){}
   authKeys().forEach(k=>lsDel(k));   // 通信できなくても、この端末のログインは必ず消す
   location.reload();
